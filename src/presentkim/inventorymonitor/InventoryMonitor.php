@@ -2,44 +2,58 @@
 
 namespace presentkim\inventorymonitor;
 
+use pocketmine\Player;
+use pocketmine\command\{
+  Command, PluginCommand, CommandExecutor, CommandSender
+};
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\plugin\PluginBase;
-use presentkim\inventorymonitor\command\PoolCommand;
-use presentkim\inventorymonitor\command\subcommands\{
-  ViewSubCommand, LangSubCommand, ReloadSubCommand
-};
 use presentkim\inventorymonitor\inventory\SyncInventory;
+use presentkim\inventorymonitor\lang\PluginLang;
 use presentkim\inventorymonitor\listener\{
   InventoryEventListener, PlayerEventListener
 };
-use presentkim\inventorymonitor\util\Translation;
 
-class InventoryMonitor extends PluginBase{
+class InventoryMonitor extends PluginBase implements CommandExecutor{
 
     /** @var InventoryMonitor */
     private static $instance = null;
-
-    /** @var string */
-    public static $prefix = '';
 
     /** @return InventoryMonitor */
     public static function getInstance() : InventoryMonitor{
         return self::$instance;
     }
 
-    /** @var PoolCommand */
+    /** @var PluginCommand */
     private $command;
 
+    /** @var PluginLang */
+    private $language;
+
     public function onLoad() : void{
-        if (self::$instance === null) {
-            self::$instance = $this;
-            Translation::loadFromResource($this->getResource('lang/eng.yml'), true);
-        }
+        self::$instance = $this;
     }
 
     public function onEnable() : void{
-        $this->load();
+        $dataFolder = $this->getDataFolder();
+        if (!file_exists($dataFolder)) {
+            mkdir($dataFolder, 0777, true);
+        }
+        $this->language = new PluginLang($this);
+
+        if ($this->command !== null) {
+            $this->getServer()->getCommandMap()->unregister($this->command);
+        }
+        $this->command = new PluginCommand($this->language->translate('commands.inventorymonitor'), $this);
+        $this->command->setPermission('inventorymonitor.cmd');
+        $this->command->setDescription($this->language->translate('commands.inventorymonitor.description'));
+        $this->command->setUsage($this->language->translate('commands.inventorymonitor.usage'));
+        if (is_array($aliases = $this->language->getArray('commands.inventorymonitor.aliases'))) {
+            $this->command->setAliases($aliases);
+        }
+        $this->getServer()->getCommandMap()->register('inventorymonitor', $this->command);
+
         $this->getServer()->getPluginManager()->registerEvents(new InventoryEventListener(), $this);
         $this->getServer()->getPluginManager()->registerEvents(new PlayerEventListener(), $this);
     }
@@ -71,47 +85,66 @@ class InventoryMonitor extends PluginBase{
         SyncInventory::$instances = [];
     }
 
-    public function load() : void{
-        $dataFolder = $this->getDataFolder();
-        if (!file_exists($dataFolder)) {
-            mkdir($dataFolder, 0777, true);
-        }
-
-        $langfilename = $dataFolder . 'lang.yml';
-        if (!file_exists($langfilename)) {
-            $resource = $this->getResource('lang/eng.yml');
-            fwrite($fp = fopen("{$dataFolder}lang.yml", "wb"), $contents = stream_get_contents($resource));
-            fclose($fp);
-            Translation::loadFromContents($contents);
+    /**
+     * @param CommandSender $sender
+     * @param Command       $command
+     * @param string        $label
+     * @param string[]      $args
+     *
+     * @return bool
+     */
+    public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
+        if ($sender instanceof Player) {
+            if (isset($args[0])) {
+                $playerName = strtolower($args[0]);
+                $nbt = null;
+                $player = $this->getServer()->getPlayerExact($playerName);
+                if ($player === null) {
+                    if (file_exists("{$this->getServer()->getDataPath()}players/{$playerName}.dat")) {
+                        $nbt = $this->getServer()->getOfflinePlayerData($playerName);
+                    } else {
+                        $sender->sendMessage(Plugin::$prefix . $this->language->translate('commands.generic.player.notFound', [$args[0]]));
+                        return true;
+                    }
+                }
+                if (!isset(SyncInventory::$instances[$playerName])) {
+                    SyncInventory::$instances[$playerName] = new SyncInventory($playerName, $nbt);
+                }
+                $sender->addWindow(SyncInventory::$instances[$playerName]);
+            } else {
+                return false;
+            }
         } else {
-            Translation::load($langfilename);
+            $sender->sendMessage($this->language->translate('commands.generic.onlyPlayer'));
         }
-
-        self::$prefix = Translation::translate('prefix');
-        $this->reloadCommand();
-    }
-
-    public function reloadCommand() : void{
-        if ($this->command == null) {
-            $this->command = new PoolCommand($this, 'inventorymonitor');
-            $this->command->createSubCommand(ViewSubCommand::class);
-            $this->command->createSubCommand(LangSubCommand::class);
-            $this->command->createSubCommand(ReloadSubCommand::class);
-        }
-        $this->command->updateTranslation();
-        $this->command->updateSudCommandTranslation();
-        if ($this->command->isRegistered()) {
-            $this->getServer()->getCommandMap()->unregister($this->command);
-        }
-        $this->getServer()->getCommandMap()->register(strtolower($this->getName()), $this->command);
+        return true;
     }
 
     /**
      * @param string $name = ''
      *
-     * @return PoolCommand
+     * @return PluginCommand
      */
-    public function getCommand(string $name = '') : PoolCommand{
+    public function getCommand(string $name = '') : PluginCommand{
         return $this->command;
+    }
+
+    /**
+     * @return PluginLang
+     */
+    public function getLanguage() : PluginLang{
+        return $this->language;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSourceFolder() : string{
+        $pharPath = \Phar::running();
+        if (empty($pharPath)) {
+            return dirname(__FILE__, 4) . DIRECTORY_SEPARATOR;
+        } else {
+            return $pharPath . DIRECTORY_SEPARATOR;
+        }
     }
 }
