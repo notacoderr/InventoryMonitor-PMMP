@@ -155,6 +155,9 @@ class SyncInventory extends CustomInventory{
     public function onClose(Player $who) : void{
         BaseInventory::onClose($who);
         $key = $who->getLowerCaseName();
+        if (!isset($this->vectors[$key])) {
+            return;
+        }
         for ($i = 0; $i < 2; $i++) {
             $block = $who->getLevel()->getBlock($vec = $this->vectors[$key]->add($i, 0, 0));
 
