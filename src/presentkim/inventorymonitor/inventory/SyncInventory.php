@@ -58,6 +58,13 @@ class SyncInventory extends CustomInventory{
                     $items[$i] = $item;
                 }
             }
+            $armorInventory = $player->getArmorInventory();
+            for ($i = 0; $i < 4; ++$i) {
+                $item = $armorInventory->getItem($i);
+                if (!$item->isNull()) {
+                    $items[$i + 45] = $item;
+                }
+            }
         } elseif ($namedTag !== null) {
             $inventoryTag = $namedTag->getListTag("Inventory");
             if ($inventoryTag !== null) {
@@ -66,6 +73,9 @@ class SyncInventory extends CustomInventory{
                     $slot = $itemTag->getByte("Slot");
                     if ($slot > 8 && $slot < 35) { // 9-44 is PlayerInventory slot
                         $items[$slot - 9] = Item::nbtDeserialize($itemTag);
+                    } elseif ($slot > 99 and $slot < 104) { // 100-103 is ArmorInventory slot
+                        // $items[$slot - 100 + 45] = Item::nbtDeserialize($itemTag);
+                        $items[$slot - 55] = Item::nbtDeserialize($itemTag);
                     }
                 }
             }
