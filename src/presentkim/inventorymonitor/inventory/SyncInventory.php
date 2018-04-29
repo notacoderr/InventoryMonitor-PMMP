@@ -71,7 +71,7 @@ class SyncInventory extends CustomInventory{
                 /** @var CompoundTag $itemTag */
                 foreach ($inventoryTag as $i => $itemTag) {
                     $slot = $itemTag->getByte("Slot");
-                    if ($slot > 8 && $slot < 35) { // 9-44 is PlayerInventory slot
+                    if ($slot > 8 && $slot < 44) { // 9-44 is PlayerInventory slot
                         $items[$slot - 9] = Item::nbtDeserialize($itemTag);
                     } elseif ($slot > 99 and $slot < 104) { // 100-103 is ArmorInventory slot
                         // $items[$slot - 100 + 44] = Item::nbtDeserialize($itemTag);
