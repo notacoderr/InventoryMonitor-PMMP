@@ -62,7 +62,7 @@ class SyncInventory extends CustomInventory{
             for ($i = 0; $i < 4; ++$i) {
                 $item = $armorInventory->getItem($i);
                 if (!$item->isNull()) {
-                    $items[$i + 45] = $item;
+                    $items[$i + 46] = $item;
                 }
             }
         } elseif ($namedTag !== null) {
@@ -74,8 +74,8 @@ class SyncInventory extends CustomInventory{
                     if ($slot > 8 && $slot < 35) { // 9-44 is PlayerInventory slot
                         $items[$slot - 9] = Item::nbtDeserialize($itemTag);
                     } elseif ($slot > 99 and $slot < 104) { // 100-103 is ArmorInventory slot
-                        // $items[$slot - 100 + 45] = Item::nbtDeserialize($itemTag);
-                        $items[$slot - 55] = Item::nbtDeserialize($itemTag);
+                        // $items[$slot - 100 + 44] = Item::nbtDeserialize($itemTag);
+                        $items[$slot - 54] = Item::nbtDeserialize($itemTag);
                     }
                 }
             }
@@ -190,7 +190,7 @@ class SyncInventory extends CustomInventory{
                 if ($this->isPlayerSlot($index)) {
                     $inventory->setItem($index, $item, true);
                 } elseif ($this->isArmorSlot($index)) {
-                    $player->getArmorInventory()->setItem($index - 45, $item, true);
+                    $player->getArmorInventory()->setItem($index - 46, $item, true);
                 } elseif ($this->isCursorSlot($index)) {
                     $player->getCursorInventory()->setItem(0, $item, true);
                 }
@@ -244,8 +244,8 @@ class SyncInventory extends CustomInventory{
      * @return bool
      */
     public function isArmorSlot(int $index){
-        // 45-48 is ArmorInventory  slot
-        return $index > 44 && $index < 49;
+        // 46-49 is ArmorInventory  slot
+        return $index > 45 && $index < 50;
     }
 
     /**
@@ -254,7 +254,7 @@ class SyncInventory extends CustomInventory{
      * @return bool
      */
     public function isCursorSlot(int $index){
-        // 53 is ArmorInventory  slot
-        return $index === 53;
+        // 52 is ArmorInventory  slot
+        return $index === 52;
     }
 }

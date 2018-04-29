@@ -33,7 +33,7 @@ class InventoryEventListener implements Listener{
             if ($player instanceof Player) {
                 $syncInventory = SyncInventory::$instances[$player->getLowerCaseName()] ?? null;
                 if ($syncInventory !== null) {
-                    $syncInventory->setItem($event->getSlot() + ($event instanceof EntityArmorChangeEvent ? 45 : 0), $event->getNewItem(), true, false);
+                    $syncInventory->setItem($event->getSlot() + ($event instanceof EntityArmorChangeEvent ? 46 : 0), $event->getNewItem(), true, false);
                 }
             }
         }
@@ -57,7 +57,7 @@ class InventoryEventListener implements Listener{
                     $player = $inventory->getHolder();
                     $syncInventory = SyncInventory::$instances[$player->getLowerCaseName()] ?? null;
                     if ($syncInventory !== null) {
-                        $syncInventory->setItem(53, $action->getTargetItem(), true, false);
+                        $syncInventory->setItem(52, $action->getTargetItem(), true, false);
                     }
                 }
             }
