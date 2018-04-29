@@ -52,7 +52,7 @@ class SyncInventory extends CustomInventory{
         $player = Server::getInstance()->getPlayerExact($playerName);
         if ($player instanceof Player) {
             $inventory = $player->getInventory();
-            for ($i = 0, $size = $inventory->getSize(); $i < $size; ++$i) {
+            for ($i = 0; $i < 36; ++$i) {
                 $item = $inventory->getItem($i);
                 if (!$item->isNull()) {
                     $items[$i] = $item;
@@ -64,7 +64,7 @@ class SyncInventory extends CustomInventory{
                 /** @var CompoundTag $itemTag */
                 foreach ($inventoryTag as $i => $itemTag) {
                     $slot = $itemTag->getByte("Slot");
-                    if ($slot >= 9 && $slot < 100) {
+                    if ($slot > 8 && $slot < 35) { // 9-44 is PlayerInventory slot
                         $items[$slot - 9] = Item::nbtDeserialize($itemTag);
                     }
                 }
