@@ -114,9 +114,4 @@ class InventoryMonitor extends PluginBase{
     public function getCommand(string $name = '') : PoolCommand{
         return $this->command;
     }
-
-    /** @param PoolCommand $command */
-    public function setCommand(PoolCommand $command) : void{
-        $this->command = $command;
-    }
 }
