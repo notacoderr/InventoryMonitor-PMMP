@@ -2,7 +2,6 @@
 
 namespace presentkim\inventorymonitor\inventory;
 
-use pocketmine\item\Item;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\block\{
@@ -11,6 +10,7 @@ use pocketmine\block\{
 use pocketmine\inventory\{
   BaseInventory, CustomInventory
 };
+use pocketmine\item\Item;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\NetworkLittleEndianNBTStream;
 use pocketmine\nbt\tag\{
@@ -21,8 +21,8 @@ use pocketmine\network\mcpe\protocol\{
 };
 use pocketmine\network\mcpe\protocol\types\WindowTypes;
 use pocketmine\tile\Spawnable;
+use presentkim\inventorymonitor\InventoryMonitor;
 use presentkim\inventorymonitor\task\SendDataPacketTask;
-use presentkim\inventorymonitor\util\Translation;
 
 class SyncInventory extends CustomInventory{
 
@@ -95,7 +95,7 @@ class SyncInventory extends CustomInventory{
           new IntTag('x', 0),
           new IntTag('y', 0),
           new IntTag('z', 0),
-          new StringTag('CustomName', Translation::translate('chest-name', $player instanceof Player ? $player->getName() : $playerName)),
+          new StringTag('CustomName', InventoryMonitor::getInstance()->getLanguage()->translate('chest.name', [$player instanceof Player ? $player->getName() : $playerName])),
         ]);
 
         if (self::$nbtWriter === null) {
