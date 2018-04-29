@@ -7,29 +7,14 @@
 A plugin monitoring player's inventory for PocketMine-MP  
 - [x] See player's inventory with real-time sync
 - [x] Modify inventory in sync inventory
-- [x] with armor inventory
-- [x] with cursor inventory
+	- [x] with armor inventory
+	- [x] with cursor inventory
+- [x] Can modify messages and commands (in lang.ini file)
   
 ## Command
-Main command : `/inventorymonitor <view | lang | reload>`
-
-| subcommand | arguments              | description                 |
-| ---------- | ---------------------- | --------------------------- |
-| View       | \[player name\]        | Open player's inventory     |
-| Lang       | \<language prefix\>    | Load default lang file      |
-| Reload     |                        | Reload all data             |
-
-
-
-
-## Permission
-| permission                  | default  | description          |
-| --------------------------- | -------- | -------------------- |
-| inventorymonitor.cmd        | OP       | main command         |
-|                             |          |                      |
-| inventorymonitor.cmd.view   | OP       | view subcommand      |
-| inventorymonitor.cmd.lang   | OP       | lang subcommand      |
-| inventorymonitor.cmd.reload | OP       | reload subcommand    |
+| name             | arguments       | description             | permission                |
+| :--------------: | :-------------: | :---------------------: | :-----------------------: |
+| inventorymonitor | \[player name\] | Open player's inventory | `OP` inventorymonitor.cmd |
   
 <br/><br/>
   
