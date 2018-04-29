@@ -170,7 +170,7 @@ class SyncInventory extends CustomInventory{
             $player = Server::getInstance()->getPlayerExact($this->playerName);
             if ($player !== null) {
                 $inventory = $player->getInventory();
-                if ($index < $inventory->getSize()) {
+                if ($index < 36) { // 36 = PlayerInventory::getDefaultSize();
                     $inventory->setItem($index, $item, true);
                 }
             }

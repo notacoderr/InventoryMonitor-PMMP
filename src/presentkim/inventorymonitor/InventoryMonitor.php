@@ -49,13 +49,13 @@ class InventoryMonitor extends PluginBase{
             $player = $this->getServer()->getPlayerExact($playerName);
             if ($player !== null) {
                 $inventory = $player->getInventory();
-                for ($i = 0; $i < 36; ++$i) {
+                for ($i = 0; $i < 36; ++$i) { // 36 = PlayerInventory::getDefaultSize();
                     $inventory->setItem($i, $syncInventory->getItem($i));
                 }
             } else {
                 $namedTag = $this->getServer()->getOfflinePlayerData($playerName);
                 $inventoryTag = new ListTag("Inventory", [], NBT::TAG_Compound);
-                for ($i = 0; $i < 36; ++$i) {
+                for ($i = 0; $i < 36; ++$i) { // 36 = PlayerInventory::getDefaultSize();
                     $item = $syncInventory->getItem($i);
                     if (!$item->isNull()) {
                         $inventoryTag->push($item->nbtSerialize($i + 9));
