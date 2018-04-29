@@ -1,7 +1,7 @@
 ---
 name:             InventoryMonitor
 main:             presentkim\inventorymonitor\InventoryMonitor
-version:          1.0.4
+version:          1.0.5
 api:              [3.0.0-ALPHA12]
 author:           PresentKim
 website:          https://github.com/PMMPPlugin/InventoryMonitor
@@ -9,16 +9,6 @@ description:      A plugin show other player's inventory
 
 permissions:
   inventorymonitor.cmd:
-    description:  InventoryMonitor main command
+    description:  "Open player's inventory"
     default:      op
-    children:
-      inventorymonitor.cmd.view:
-        description:  InventoryMonitor command - view
-        default:      op
-      inventorymonitor.cmd.lang:
-        description:  InventoryMonitor command - lang
-        default:      op
-      inventorymonitor.cmd.reload:
-        description:  InventoryMonitor command - reload
-        default:      op
 ...
