@@ -15,8 +15,7 @@ command-inventorymonitor@aliases: ["iv"]
 
 command-inventorymonitor-view: "view"
 command-inventorymonitor-view@usage: "/inventorymonitor View <player name>"
-command-inventorymonitor-view@success: "Default speed was setted to {%0}"
-command-inventorymonitor-view@aliases: ["d"]
+command-inventorymonitor-view@aliases: ["v"]
 
 command-inventorymonitor-lang: "lang"
 command-inventorymonitor-lang@usage: "/inventorymonitor Lang <language prefix>"
