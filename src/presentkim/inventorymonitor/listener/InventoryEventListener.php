@@ -4,7 +4,9 @@ namespace presentkim\inventorymonitor\listener;
 
 use pocketmine\Player;
 use pocketmine\event\Listener;
-use pocketmine\event\entity\EntityInventoryChangeEvent;
+use pocketmine\event\entity\{
+  EntityArmorChangeEvent, EntityInventoryChangeEvent
+};
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\inventory\transaction\action\SlotChangeAction;
 use presentkim\inventorymonitor\InventoryMonitor as Plugin;
@@ -17,6 +19,23 @@ class InventoryEventListener implements Listener{
 
     public function __construct(){
         $this->owner = Plugin::getInstance();
+    }
+
+    /**
+     * @priority MONITOR
+     *
+     * @param EntityArmorChangeEvent $event
+     */
+    public function onEntityArmorChangeEvent(EntityArmorChangeEvent $event){
+        if (!$event->isCancelled()) {
+            $player = $event->getEntity();
+            if ($player instanceof Player) {
+                $syncInventory = SyncInventory::$instances[$player->getLowerCaseName()] ?? null;
+                if ($syncInventory !== null) {
+                    $syncInventory->setItem($event->getSlot() + 45, $event->getNewItem(), true, false);
+                }
+            }
+        }
     }
 
     /**
@@ -45,7 +64,8 @@ class InventoryEventListener implements Listener{
         $transaction = $event->getTransaction();
         foreach ($transaction->getActions() as $key => $action) {
             if ($action instanceof SlotChangeAction && $action->getInventory() instanceof SyncInventory) {
-                if ($action->getSlot() >= 36) {// 36 = PlayerInventory::getDefaultSize();
+                $index = $action->getSlot();
+                if (!($index < 36 || $index > 44 && $index < 49)) { // 36 = PlayerInventory::getDefaultSize(), 45~48 is ArmorInventory
                     $event->setCancelled();
                 }
             }

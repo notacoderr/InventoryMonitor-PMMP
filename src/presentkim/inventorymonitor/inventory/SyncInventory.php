@@ -172,6 +172,8 @@ class SyncInventory extends CustomInventory{
                 $inventory = $player->getInventory();
                 if ($index < 36) { // 36 = PlayerInventory::getDefaultSize();
                     $inventory->setItem($index, $item, true);
+                } elseif ($index > 44 && $index < 49) { // 45~48 is ArmorInventory
+                    $player->getArmorInventory()->setItem($index - 45, $item, true);
                 }
             }
         }
