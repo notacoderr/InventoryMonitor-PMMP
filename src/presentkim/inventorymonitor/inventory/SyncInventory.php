@@ -80,6 +80,13 @@ class SyncInventory extends CustomInventory{
                 }
             }
         }
+        $borderItem = Item::get(Block::SKULL_BLOCK);
+        $borderItem->setCustomName('');
+        for ($i = 36; $i < 54; ++$i) {
+            if (!$this->isValidSlot($i)) {
+                $items[$i] = clone $borderItem;
+            }
+        }
         parent::__construct(new Vector3(0, 0, 0), $items, 54, null);
 
         $this->playerName = $playerName;
