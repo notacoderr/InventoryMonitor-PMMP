@@ -9,6 +9,7 @@ use pocketmine\event\entity\{
 };
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\inventory\transaction\action\SlotChangeAction;
+use pocketmine\inventory\PlayerCursorInventory;
 use presentkim\inventorymonitor\InventoryMonitor as Plugin;
 use presentkim\inventorymonitor\inventory\SyncInventory;
 
@@ -47,9 +48,17 @@ class InventoryEventListener implements Listener{
         $transaction = $event->getTransaction();
         foreach ($transaction->getActions() as $key => $action) {
             if ($action instanceof SlotChangeAction) {
-                $syncInventory = $action->getInventory();
-                if ($syncInventory instanceof SyncInventory && !$syncInventory->isValidSlot($action->getSlot())) {
-                    $event->setCancelled();
+                $inventory = $action->getInventory();
+                if ($inventory instanceof SyncInventory) {
+                    if (!$inventory->isValidSlot($action->getSlot())) {
+                        $event->setCancelled();
+                    }
+                } elseif ($inventory instanceof PlayerCursorInventory) {
+                    $player = $inventory->getHolder();
+                    $syncInventory = SyncInventory::$instances[$player->getLowerCaseName()] ?? null;
+                    if ($syncInventory !== null) {
+                        $syncInventory->setItem(53, $action->getTargetItem(), true, false);
+                    }
                 }
             }
         }

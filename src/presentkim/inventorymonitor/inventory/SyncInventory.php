@@ -191,6 +191,8 @@ class SyncInventory extends CustomInventory{
                     $inventory->setItem($index, $item, true);
                 } elseif ($this->isArmorSlot($index)) {
                     $player->getArmorInventory()->setItem($index - 45, $item, true);
+                } elseif ($this->isCursorSlot($index)) {
+                    $player->getCursorInventory()->setItem(0, $item, true);
                 }
             }
         }
@@ -223,7 +225,7 @@ class SyncInventory extends CustomInventory{
      * @return bool
      */
     public function isValidSlot(int $index){
-        return $this->isPlayerSlot($index) || $this->isArmorSlot($index);
+        return $this->isPlayerSlot($index) || $this->isArmorSlot($index) || $this->isCursorSlot($index);
     }
 
     /**
@@ -244,5 +246,15 @@ class SyncInventory extends CustomInventory{
     public function isArmorSlot(int $index){
         // 45-48 is ArmorInventory  slot
         return $index > 44 && $index < 49;
+    }
+
+    /**
+     * @param int $index
+     *
+     * @return bool
+     */
+    public function isCursorSlot(int $index){
+        // 53 is ArmorInventory  slot
+        return $index === 53;
     }
 }
