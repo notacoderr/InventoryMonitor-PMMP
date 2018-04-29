@@ -24,23 +24,6 @@ class InventoryEventListener implements Listener{
     /**
      * @priority MONITOR
      *
-     * @param EntityArmorChangeEvent $event
-     */
-    public function onEntityArmorChangeEvent(EntityArmorChangeEvent $event){
-        if (!$event->isCancelled()) {
-            $player = $event->getEntity();
-            if ($player instanceof Player) {
-                $syncInventory = SyncInventory::$instances[$player->getLowerCaseName()] ?? null;
-                if ($syncInventory !== null) {
-                    $syncInventory->setItem($event->getSlot() + 45, $event->getNewItem(), true, false);
-                }
-            }
-        }
-    }
-
-    /**
-     * @priority MONITOR
-     *
      * @param EntityInventoryChangeEvent $event
      */
     public function onEntityInventoryChangeEvent(EntityInventoryChangeEvent $event){
@@ -49,7 +32,7 @@ class InventoryEventListener implements Listener{
             if ($player instanceof Player) {
                 $syncInventory = SyncInventory::$instances[$player->getLowerCaseName()] ?? null;
                 if ($syncInventory !== null) {
-                    $syncInventory->setItem($event->getSlot(), $event->getNewItem(), true, false);
+                    $syncInventory->setItem($event->getSlot() + ($event instanceof EntityArmorChangeEvent ? 45 : 0), $event->getNewItem(), true, false);
                 }
             }
         }
