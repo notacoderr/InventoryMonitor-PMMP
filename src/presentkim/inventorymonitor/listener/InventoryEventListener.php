@@ -63,9 +63,9 @@ class InventoryEventListener implements Listener{
     public function onInventoryTransactionEvent(InventoryTransactionEvent $event){
         $transaction = $event->getTransaction();
         foreach ($transaction->getActions() as $key => $action) {
-            if ($action instanceof SlotChangeAction && $action->getInventory() instanceof SyncInventory) {
-                $index = $action->getSlot();
-                if (!($index < 36 || $index > 44 && $index < 49)) { // 36 = PlayerInventory::getDefaultSize(), 45~48 is ArmorInventory
+            if ($action instanceof SlotChangeAction) {
+                $syncInventory = $action->getInventory();
+                if ($syncInventory instanceof SyncInventory && !$syncInventory->isValidSlot($action->getSlot())) {
                     $event->setCancelled();
                 }
             }

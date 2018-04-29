@@ -170,9 +170,9 @@ class SyncInventory extends CustomInventory{
             $player = Server::getInstance()->getPlayerExact($this->playerName);
             if ($player !== null) {
                 $inventory = $player->getInventory();
-                if ($index < 36) { // 36 = PlayerInventory::getDefaultSize();
+                if ($this->isPlayerSlot($index)) {
                     $inventory->setItem($index, $item, true);
-                } elseif ($index > 44 && $index < 49) { // 45~48 is ArmorInventory
+                } elseif ($this->isArmorSlot($index)) {
                     $player->getArmorInventory()->setItem($index - 45, $item, true);
                 }
             }
@@ -198,5 +198,34 @@ class SyncInventory extends CustomInventory{
     /** @return string */
     public function getPlayerName() : string{
         return $this->playerName;
+    }
+
+    /**
+     * @param int $index
+     *
+     * @return bool
+     */
+    public function isValidSlot(int $index){
+        return $this->isPlayerSlot($index) || $this->isArmorSlot($index);
+    }
+
+    /**
+     * @param int $index
+     *
+     * @return bool
+     */
+    public function isPlayerSlot(int $index){
+        //  0-36 is PlayerInventory slot
+        return $index < 36;
+    }
+
+    /**
+     * @param int $index
+     *
+     * @return bool
+     */
+    public function isArmorSlot(int $index){
+        // 45-48 is ArmorInventory  slot
+        return $index > 44 && $index < 49;
     }
 }
