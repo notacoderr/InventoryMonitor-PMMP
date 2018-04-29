@@ -5,7 +5,9 @@ namespace presentkim\inventorymonitor\inventory;
 use pocketmine\item\Item;
 use pocketmine\Player;
 use pocketmine\Server;
-use pocketmine\block\Block;
+use pocketmine\block\{
+  Block, BlockFactory
+};
 use pocketmine\inventory\{
   BaseInventory, CustomInventory
 };
@@ -96,11 +98,11 @@ class SyncInventory extends CustomInventory{
 
         for ($i = 0; $i < 2; $i++) {
             $pk = new UpdateBlockPacket();
-            $pk->blockId = Block::CHEST;
-            $pk->blockData = 0;
             $pk->x = $vec->x + $i;
             $pk->y = $vec->y;
             $pk->z = $vec->z;
+            $pk->blockRuntimeId = BlockFactory::toStaticRuntimeId(Block::CHEST);
+            $pk->flags = UpdateBlockPacket::FLAG_NONE;
             $who->sendDataPacket($pk);
 
 
@@ -143,8 +145,8 @@ class SyncInventory extends CustomInventory{
             $pk->x = $vec->x;
             $pk->y = $vec->y;
             $pk->z = $vec->z;
-            $pk->blockId = $block->getId();
-            $pk->blockData = $block->getDamage();
+            $pk->blockRuntimeId = BlockFactory::toStaticRuntimeId($block->getId(), $block->getDamage());
+            $pk->flags = UpdateBlockPacket::FLAG_NONE;
             $who->sendDataPacket($pk);
 
             $tile = $who->getLevel()->getTile($vec);
