@@ -30,6 +30,12 @@ use blugin\inventorymonitor\task\SendDataPacketTask;
 
 class SyncInventory extends CustomInventory{
 
+    public const INV_START = 0;
+    public const INV_END = 35;
+    public const ARMOR_START = 46;
+    public const ARMOR_END = 49;
+    public const CURSOR = 52;
+
     /** @var NetworkLittleEndianNBTStream|null */
     private static $nbtWriter = null;
 
@@ -53,6 +59,7 @@ class SyncInventory extends CustomInventory{
      */
     public function __construct(string $playerName, ?CompoundTag $namedTag = null){
         parent::__construct(new Vector3(0, 0, 0), [], 54, null);
+
         $player = Server::getInstance()->getPlayerExact($playerName);
         if ($player instanceof Player) {
             $this->loadFromPlayer($player);
@@ -61,7 +68,7 @@ class SyncInventory extends CustomInventory{
         }
         $borderItem = Item::get(Block::SKULL_BLOCK);
         $borderItem->setCustomName('');
-        for ($i = 36; $i < 54; ++$i) {
+        for ($i = 0; $i < 54; ++$i) {
             if (!$this->isValidSlot($i)) {
                 $this->setItem($i, clone $borderItem);
             }
@@ -168,7 +175,7 @@ class SyncInventory extends CustomInventory{
             $player = Server::getInstance()->getPlayerExact($this->playerName);
             if ($player !== null) {
                 $inventory = $player->getInventory();
-                if ($this->isPlayerSlot($index)) {
+                if ($this->isInventorySlot($index)) {
                     $inventory->setItem($index, $item, true);
                 } elseif ($this->isArmorSlot($index)) {
                     $player->getArmorInventory()->setItem($index - 46, $item, true);
@@ -206,7 +213,7 @@ class SyncInventory extends CustomInventory{
      * @return bool
      */
     public function isValidSlot(int $index){
-        return $this->isPlayerSlot($index) || $this->isArmorSlot($index) || $this->isCursorSlot($index);
+        return $this->isInventorySlot($index) || $this->isArmorSlot($index) || $this->isCursorSlot($index);
     }
 
     /**
@@ -214,9 +221,8 @@ class SyncInventory extends CustomInventory{
      *
      * @return bool
      */
-    public function isPlayerSlot(int $index){
-        //  0-35 is PlayerInventory slot
-        return $index < 36;
+    public function isInventorySlot(int $index){
+        return $index >= self::INV_START && $index <= self::INV_END;
     }
 
     /**
@@ -225,8 +231,7 @@ class SyncInventory extends CustomInventory{
      * @return bool
      */
     public function isArmorSlot(int $index){
-        // 46-49 is ArmorInventory  slot
-        return $index > 45 && $index < 50;
+        return $index >= self::ARMOR_START && $index <= self::ARMOR_END;
     }
 
     /**
@@ -235,8 +240,7 @@ class SyncInventory extends CustomInventory{
      * @return bool
      */
     public function isCursorSlot(int $index){
-        // 52 is ArmorInventory  slot
-        return $index === 52;
+        return $index === self::CURSOR;
     }
 
     /**
@@ -251,7 +255,7 @@ class SyncInventory extends CustomInventory{
                 if ($slot > 8 && $slot < 44) { // 9-44 is PlayerInventory slot
                     $this->setItem($slot - 9, Item::nbtDeserialize($itemTag));
                 } elseif ($slot > 99 and $slot < 104) { // 100-103 is ArmorInventory slot
-                    $this->setItem($slot - 54, Item::nbtDeserialize($itemTag)); // $i + 46 - 100 <=> $i - 54
+                    $this->setItem($slot + self::ARMOR_START - 100, Item::nbtDeserialize($itemTag));
                 }
             }
         }
@@ -262,16 +266,16 @@ class SyncInventory extends CustomInventory{
      */
     public function saveToNBT(CompoundTag $namedTag){
         $inventoryTag = new ListTag("Inventory", [], NBT::TAG_Compound);
-        for ($i = 0; $i < 36; ++$i) { //  0-35 is PlayerInventory slot
+        for ($i = self::INV_START; $i <= self::INV_END; ++$i) {
             $item = $this->getItem($i);
             if (!$item->isNull()) {
                 $inventoryTag->push($item->nbtSerialize($i + 9));
             }
         }
-        for ($i = 46; $i < 49; ++$i) { // 46-49 is ArmorInventory  slot
+        for ($i = self::ARMOR_START; $i <= self::ARMOR_END; ++$i) {
             $item = $this->getItem($i);
             if (!$item->isNull()) {
-                $inventoryTag->push($item->nbtSerialize($i + 54)); // $i - 46 + 100 <=> $i + 54
+                $inventoryTag->push($item->nbtSerialize($i - self::ARMOR_START + 100));
             }
         }
         $namedTag->setTag($inventoryTag);
@@ -303,12 +307,12 @@ class SyncInventory extends CustomInventory{
      */
     public function saveToPlayer(Player $player){
         $inventory = $player->getInventory();
-        for ($i = 0; $i < 36; ++$i) { //  0-35 is PlayerInventory slot
+        for ($i = self::INV_START; $i <= self::INV_END; ++$i) {
             $inventory->setItem($i, $this->getItem($i));
         }
 
         $armorInventory = $player->getArmorInventory();
-        for ($i = 46; $i < 49; ++$i) { // 46-49 is ArmorInventory  slot
+        for ($i = self::ARMOR_START; $i <= self::ARMOR_END; ++$i) {
             $item = $this->getItem($i);
             if (!$item->isNull()) {
                 $armorInventory->setItem($i - 46, $this->getItem($i));
