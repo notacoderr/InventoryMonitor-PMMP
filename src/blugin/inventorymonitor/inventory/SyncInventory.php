@@ -52,7 +52,7 @@ class SyncInventory extends CustomInventory{
      * @param CompoundTag $namedTag
      */
     public function __construct(string $playerName, ?CompoundTag $namedTag = null){
-        $items = [];
+        parent::__construct(new Vector3(0, 0, 0), [], 54, null);
         $player = Server::getInstance()->getPlayerExact($playerName);
         if ($player instanceof Player) {
             $this->loadFromPlayer($player);
@@ -63,10 +63,9 @@ class SyncInventory extends CustomInventory{
         $borderItem->setCustomName('');
         for ($i = 36; $i < 54; ++$i) {
             if (!$this->isValidSlot($i)) {
-                $items[$i] = clone $borderItem;
+                $this->setItem($i, clone $borderItem);
             }
         }
-        parent::__construct(new Vector3(0, 0, 0), $items, 54, null);
 
         $this->playerName = $playerName;
         $this->nbt = new CompoundTag('', [
@@ -250,9 +249,9 @@ class SyncInventory extends CustomInventory{
             foreach ($inventoryTag as $i => $itemTag) {
                 $slot = $itemTag->getByte("Slot");
                 if ($slot > 8 && $slot < 44) { // 9-44 is PlayerInventory slot
-                    $items[$slot - 9] = Item::nbtDeserialize($itemTag);
+                    $this->setItem($slot - 9, Item::nbtDeserialize($itemTag));
                 } elseif ($slot > 99 and $slot < 104) { // 100-103 is ArmorInventory slot
-                    $items[$slot - 54] = Item::nbtDeserialize($itemTag); // $i + 46 - 100 <=> $i - 54
+                    $this->setItem($slot - 54, Item::nbtDeserialize($itemTag)); // $i + 46 - 100 <=> $i - 54
                 }
             }
         }
@@ -286,7 +285,7 @@ class SyncInventory extends CustomInventory{
         for ($i = 0; $i < 36; ++$i) {
             $item = $inventory->getItem($i);
             if (!$item->isNull()) {
-                $items[$i] = $item;
+                $this->setItem($i, $item);
             }
         }
 
@@ -294,7 +293,7 @@ class SyncInventory extends CustomInventory{
         for ($i = 0; $i < 4; ++$i) {
             $item = $armorInventory->getItem($i);
             if (!$item->isNull()) {
-                $items[$i + 46] = $item;
+                $this->setItem($i + 46, $item);
             }
         }
     }
