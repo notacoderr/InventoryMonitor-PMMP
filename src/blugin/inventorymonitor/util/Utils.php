@@ -1,6 +1,6 @@
 <?php
 
-namespace presentkim\inventorymonitor\util;
+namespace blugin\inventorymonitor\util;
 
 class Utils{
 

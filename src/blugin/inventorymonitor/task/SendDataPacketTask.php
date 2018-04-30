@@ -1,6 +1,6 @@
 <?php
 
-namespace presentkim\inventorymonitor\task;
+namespace blugin\inventorymonitor\task;
 
 use pocketmine\Player;
 use pocketmine\network\mcpe\protocol\DataPacket;

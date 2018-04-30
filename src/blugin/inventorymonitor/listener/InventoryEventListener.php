@@ -1,6 +1,6 @@
 <?php
 
-namespace presentkim\inventorymonitor\listener;
+namespace blugin\inventorymonitor\listener;
 
 use pocketmine\Player;
 use pocketmine\event\Listener;
@@ -10,8 +10,8 @@ use pocketmine\event\entity\{
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\inventory\transaction\action\SlotChangeAction;
 use pocketmine\inventory\PlayerCursorInventory;
-use presentkim\inventorymonitor\InventoryMonitor as Plugin;
-use presentkim\inventorymonitor\inventory\SyncInventory;
+use blugin\inventorymonitor\InventoryMonitor as Plugin;
+use blugin\inventorymonitor\inventory\SyncInventory;
 
 class InventoryEventListener implements Listener{
 

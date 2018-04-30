@@ -1,6 +1,6 @@
 <?php
 
-namespace presentkim\inventorymonitor\inventory;
+namespace blugin\inventorymonitor\inventory;
 
 use pocketmine\Player;
 use pocketmine\Server;
@@ -21,8 +21,8 @@ use pocketmine\network\mcpe\protocol\{
 };
 use pocketmine\network\mcpe\protocol\types\WindowTypes;
 use pocketmine\tile\Spawnable;
-use presentkim\inventorymonitor\InventoryMonitor;
-use presentkim\inventorymonitor\task\SendDataPacketTask;
+use blugin\inventorymonitor\InventoryMonitor;
+use blugin\inventorymonitor\task\SendDataPacketTask;
 
 class SyncInventory extends CustomInventory{
 

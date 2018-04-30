@@ -1,11 +1,11 @@
 <?php
 
-namespace presentkim\inventorymonitor\listener;
+namespace blugin\inventorymonitor\listener;
 
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
-use presentkim\inventorymonitor\InventoryMonitor as Plugin;
-use presentkim\inventorymonitor\inventory\SyncInventory;
+use blugin\inventorymonitor\InventoryMonitor as Plugin;
+use blugin\inventorymonitor\inventory\SyncInventory;
 
 class PlayerEventListener implements Listener{
 

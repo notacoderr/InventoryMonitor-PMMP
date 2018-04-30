@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace presentkim\inventorymonitor\lang;
+namespace blugin\inventorymonitor\lang;
 
-use presentkim\inventorymonitor\InventoryMonitor;
+use blugin\inventorymonitor\InventoryMonitor;
 
 class PluginLang{
 

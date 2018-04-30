@@ -1,6 +1,6 @@
 <?php
 
-namespace presentkim\inventorymonitor;
+namespace blugin\inventorymonitor;
 
 use pocketmine\Player;
 use pocketmine\command\{
@@ -9,9 +9,9 @@ use pocketmine\command\{
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\plugin\PluginBase;
-use presentkim\inventorymonitor\inventory\SyncInventory;
-use presentkim\inventorymonitor\lang\PluginLang;
-use presentkim\inventorymonitor\listener\{
+use blugin\inventorymonitor\inventory\SyncInventory;
+use blugin\inventorymonitor\lang\PluginLang;
+use blugin\inventorymonitor\listener\{
   InventoryEventListener, PlayerEventListener
 };
 
