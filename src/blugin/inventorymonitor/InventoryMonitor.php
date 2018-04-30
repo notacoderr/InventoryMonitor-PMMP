@@ -8,8 +8,6 @@ use pocketmine\Player;
 use pocketmine\command\{
   Command, PluginCommand, CommandExecutor, CommandSender
 };
-use pocketmine\nbt\NBT;
-use pocketmine\nbt\tag\ListTag;
 use pocketmine\plugin\PluginBase;
 use blugin\inventorymonitor\inventory\SyncInventory;
 use blugin\inventorymonitor\lang\PluginLang;
@@ -62,32 +60,17 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 
     public function onDisable() : void{
         foreach (SyncInventory::$instances as $playerName => $syncInventory) {
-            $player = $this->getServer()->getPlayerExact($playerName);
-            if ($player !== null) {
-                $inventory = $player->getInventory();
-                for ($i = 0; $i < 36; ++$i) { // 36 = PlayerInventory::getDefaultSize();
-                    $inventory->setItem($i, $syncInventory->getItem($i));
-                }
-            } else {
-                $namedTag = $this->getServer()->getOfflinePlayerData($playerName);
-                $inventoryTag = new ListTag("Inventory", [], NBT::TAG_Compound);
-                for ($i = 0; $i < 36; ++$i) { //  0-35 is PlayerInventory slot
-                    $item = $syncInventory->getItem($i);
-                    if (!$item->isNull()) {
-                        $inventoryTag->push($item->nbtSerialize($i + 9));
-                    }
-                }
-                for ($i = 46; $i < 49; ++$i) { // 46-49 is ArmorInventory  slot
-                    $item = $syncInventory->getItem($i);
-                    if (!$item->isNull()) {
-                        $inventoryTag->push($item->nbtSerialize($i + 54)); // $i - 46 + 100 <=> $i + 54
-                    }
-                }
-                $namedTag->setTag($inventoryTag);
-                $this->getServer()->saveOfflinePlayerData($playerName, $namedTag);
-            }
             foreach ($syncInventory->getViewers() as $key => $who) {
                 $syncInventory->close($who);
+            }
+
+            $player = $this->getServer()->getPlayerExact($playerName);
+            if ($player !== null) {
+                $syncInventory->saveToPlayer($player);
+            } else {
+                $namedTag = $this->getServer()->getOfflinePlayerData($playerName);
+                $syncInventory->saveToNBT($namedTag);
+                $this->getServer()->saveOfflinePlayerData($playerName, $namedTag);
             }
         }
         SyncInventory::$instances = [];

@@ -14,9 +14,11 @@ use pocketmine\inventory\{
 };
 use pocketmine\item\Item;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\NetworkLittleEndianNBTStream;
+use pocketmine\nbt\{
+  NBT, NetworkLittleEndianNBTStream
+};
 use pocketmine\nbt\tag\{
-  CompoundTag, IntTag, StringTag
+  CompoundTag, ListTag, IntTag, StringTag
 };
 use pocketmine\network\mcpe\protocol\{
   UpdateBlockPacket, BlockEntityDataPacket, ContainerOpenPacket, InventoryContentPacket
@@ -53,33 +55,9 @@ class SyncInventory extends CustomInventory{
         $items = [];
         $player = Server::getInstance()->getPlayerExact($playerName);
         if ($player instanceof Player) {
-            $inventory = $player->getInventory();
-            for ($i = 0; $i < 36; ++$i) {
-                $item = $inventory->getItem($i);
-                if (!$item->isNull()) {
-                    $items[$i] = $item;
-                }
-            }
-            $armorInventory = $player->getArmorInventory();
-            for ($i = 0; $i < 4; ++$i) {
-                $item = $armorInventory->getItem($i);
-                if (!$item->isNull()) {
-                    $items[$i + 46] = $item;
-                }
-            }
+            $this->loadFromPlayer($player);
         } elseif ($namedTag !== null) {
-            $inventoryTag = $namedTag->getListTag("Inventory");
-            if ($inventoryTag !== null) {
-                /** @var CompoundTag $itemTag */
-                foreach ($inventoryTag as $i => $itemTag) {
-                    $slot = $itemTag->getByte("Slot");
-                    if ($slot > 8 && $slot < 44) { // 9-44 is PlayerInventory slot
-                        $items[$slot - 9] = Item::nbtDeserialize($itemTag);
-                    } elseif ($slot > 99 and $slot < 104) { // 100-103 is ArmorInventory slot
-                        $items[$slot - 54] = Item::nbtDeserialize($itemTag); // $i + 46 - 100 <=> $i - 54
-                    }
-                }
-            }
+            $this->loadFromNBT($namedTag);
         }
         $borderItem = Item::get(Block::SKULL_BLOCK);
         $borderItem->setCustomName('');
@@ -260,5 +238,82 @@ class SyncInventory extends CustomInventory{
     public function isCursorSlot(int $index){
         // 52 is ArmorInventory  slot
         return $index === 52;
+    }
+
+    /**
+     * @param CompoundTag $namedTag
+     */
+    public function loadFromNBT(CompoundTag $namedTag){
+        $inventoryTag = $namedTag->getListTag("Inventory");
+        if ($inventoryTag !== null) {
+            /** @var CompoundTag $itemTag */
+            foreach ($inventoryTag as $i => $itemTag) {
+                $slot = $itemTag->getByte("Slot");
+                if ($slot > 8 && $slot < 44) { // 9-44 is PlayerInventory slot
+                    $items[$slot - 9] = Item::nbtDeserialize($itemTag);
+                } elseif ($slot > 99 and $slot < 104) { // 100-103 is ArmorInventory slot
+                    $items[$slot - 54] = Item::nbtDeserialize($itemTag); // $i + 46 - 100 <=> $i - 54
+                }
+            }
+        }
+    }
+
+    /**
+     * @param CompoundTag $namedTag
+     */
+    public function saveToNBT(CompoundTag $namedTag){
+        $inventoryTag = new ListTag("Inventory", [], NBT::TAG_Compound);
+        for ($i = 0; $i < 36; ++$i) { //  0-35 is PlayerInventory slot
+            $item = $this->getItem($i);
+            if (!$item->isNull()) {
+                $inventoryTag->push($item->nbtSerialize($i + 9));
+            }
+        }
+        for ($i = 46; $i < 49; ++$i) { // 46-49 is ArmorInventory  slot
+            $item = $this->getItem($i);
+            if (!$item->isNull()) {
+                $inventoryTag->push($item->nbtSerialize($i + 54)); // $i - 46 + 100 <=> $i + 54
+            }
+        }
+        $namedTag->setTag($inventoryTag);
+    }
+
+    /**
+     * @param Player $player
+     */
+    public function loadFromPlayer(Player $player){
+        $inventory = $player->getInventory();
+        for ($i = 0; $i < 36; ++$i) {
+            $item = $inventory->getItem($i);
+            if (!$item->isNull()) {
+                $items[$i] = $item;
+            }
+        }
+
+        $armorInventory = $player->getArmorInventory();
+        for ($i = 0; $i < 4; ++$i) {
+            $item = $armorInventory->getItem($i);
+            if (!$item->isNull()) {
+                $items[$i + 46] = $item;
+            }
+        }
+    }
+
+    /**
+     * @param Player $player
+     */
+    public function saveToPlayer(Player $player){
+        $inventory = $player->getInventory();
+        for ($i = 0; $i < 36; ++$i) { //  0-35 is PlayerInventory slot
+            $inventory->setItem($i, $this->getItem($i));
+        }
+
+        $armorInventory = $player->getArmorInventory();
+        for ($i = 46; $i < 49; ++$i) { // 46-49 is ArmorInventory  slot
+            $item = $this->getItem($i);
+            if (!$item->isNull()) {
+                $armorInventory->setItem($i - 46, $this->getItem($i));
+            }
+        }
     }
 }
