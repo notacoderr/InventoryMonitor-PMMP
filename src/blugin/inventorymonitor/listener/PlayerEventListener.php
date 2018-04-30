@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace blugin\inventorymonitor\listener;
 
+use pocketmine\Server;
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerPreLoginEvent;
 use blugin\inventorymonitor\InventoryMonitor as Plugin;
 use blugin\inventorymonitor\inventory\SyncInventory;
 
@@ -21,13 +22,15 @@ class PlayerEventListener implements Listener{
     /**
      * @priority LOWEST
      *
-     * @param PlayerJoinEvent $event
+     * @param PlayerPreLoginEvent $event
      */
-    public function onPlayerJoinEvent(PlayerJoinEvent $event){
-        $player = $event->getPlayer();
-        $syncInventory = SyncInventory::$instances[$player->getLowerCaseName()] ?? null;
+    public function onPlayerPreLoginEvent(PlayerPreLoginEvent $event){
+        $playerName = $event->getPlayer()->getLowerCaseName();
+        $syncInventory = SyncInventory::$instances[$playerName] ?? null;
         if ($syncInventory !== null) {
-            $syncInventory->saveToPlayer($player);
+            $namedTag = Server::getInstance()->getOfflinePlayerData($playerName);
+            $syncInventory->saveToNBT($namedTag);
+            Server::getInstance()->saveOfflinePlayerData($playerName, $namedTag);
         }
     }
 }
