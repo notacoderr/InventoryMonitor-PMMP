@@ -105,7 +105,7 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
                     if (file_exists("{$this->getServer()->getDataPath()}players/{$playerName}.dat")) {
                         $nbt = $this->getServer()->getOfflinePlayerData($playerName);
                     } else {
-                        $sender->sendMessage(Plugin::$prefix . $this->language->translate('commands.generic.player.notFound', [$args[0]]));
+                        $sender->sendMessage($this->language->translate('commands.generic.player.notFound', [$args[0]]));
                         return true;
                     }
                 }
