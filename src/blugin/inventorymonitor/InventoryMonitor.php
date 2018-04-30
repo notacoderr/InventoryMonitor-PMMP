@@ -71,10 +71,16 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
             } else {
                 $namedTag = $this->getServer()->getOfflinePlayerData($playerName);
                 $inventoryTag = new ListTag("Inventory", [], NBT::TAG_Compound);
-                for ($i = 0; $i < 36; ++$i) { // 36 = PlayerInventory::getDefaultSize();
+                for ($i = 0; $i < 36; ++$i) { //  0-35 is PlayerInventory slot
                     $item = $syncInventory->getItem($i);
                     if (!$item->isNull()) {
                         $inventoryTag->push($item->nbtSerialize($i + 9));
+                    }
+                }
+                for ($i = 46; $i < 49; ++$i) { // 46-49 is ArmorInventory  slot
+                    $item = $syncInventory->getItem($i);
+                    if (!$item->isNull()) {
+                        $inventoryTag->push($item->nbtSerialize($i + 54)); // $i - 46 + 100 <=> $i + 54
                     }
                 }
                 $namedTag->setTag($inventoryTag);

@@ -76,8 +76,7 @@ class SyncInventory extends CustomInventory{
                     if ($slot > 8 && $slot < 44) { // 9-44 is PlayerInventory slot
                         $items[$slot - 9] = Item::nbtDeserialize($itemTag);
                     } elseif ($slot > 99 and $slot < 104) { // 100-103 is ArmorInventory slot
-                        // $items[$slot - 100 + 44] = Item::nbtDeserialize($itemTag);
-                        $items[$slot - 54] = Item::nbtDeserialize($itemTag);
+                        $items[$slot - 54] = Item::nbtDeserialize($itemTag); // $i + 46 - 100 <=> $i - 54
                     }
                 }
             }
@@ -239,7 +238,7 @@ class SyncInventory extends CustomInventory{
      * @return bool
      */
     public function isPlayerSlot(int $index){
-        //  0-36 is PlayerInventory slot
+        //  0-35 is PlayerInventory slot
         return $index < 36;
     }
 
