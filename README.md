@@ -1,5 +1,6 @@
 # InventoryMonitor [![license](https://img.shields.io/github/license/Blugin/InventoryMonitor-PMMP.svg?label=License)](LICENSE)
-[![icon](assets/icon/192x192.png?raw=true)]()  
+<img src="./assets/icon/index.svg" height="256" width="256">  
+
 [![release](https://img.shields.io/github/release/Blugin/InventoryMonitor-PMMP.svg?label=Release) ![download](https://img.shields.io/github/downloads/Blugin/InventoryMonitor-PMMP/total.svg?label=Download)](https://github.com/Blugin/InventoryMonitor-PMMP/releases/latest)
   
 <br/><br/>
