@@ -12,12 +12,12 @@ use pocketmine\event\entity\{
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\inventory\transaction\action\SlotChangeAction;
 use pocketmine\inventory\PlayerCursorInventory;
-use blugin\inventorymonitor\InventoryMonitor as Plugin;
+use blugin\inventorymonitor\InventoryMonitor;
 use blugin\inventorymonitor\inventory\SyncInventory;
 
 class InventoryEventListener implements Listener{
 
-    /** @var Plugin */
+    /** @var InventoryMonitor */
     private $owner = null;
 
     public function __construct(){

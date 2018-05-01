@@ -7,16 +7,16 @@ namespace blugin\inventorymonitor\listener;
 use pocketmine\Server;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerPreLoginEvent;
-use blugin\inventorymonitor\InventoryMonitor as Plugin;
+use blugin\inventorymonitor\InventoryMonitor;
 use blugin\inventorymonitor\inventory\SyncInventory;
 
 class PlayerEventListener implements Listener{
 
-    /** @var Plugin */
+    /** @var InventoryMonitor */
     private $owner = null;
 
     public function __construct(){
-        $this->owner = Plugin::getInstance();
+        $this->owner = InventoryMonitor::getInstance();
     }
 
     /**
