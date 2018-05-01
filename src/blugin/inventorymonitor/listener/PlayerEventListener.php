@@ -15,8 +15,8 @@ class PlayerEventListener implements Listener{
     /** @var InventoryMonitor */
     private $owner = null;
 
-    public function __construct(){
-        $this->owner = InventoryMonitor::getInstance();
+    public function __construct(InventoryMonitor $owner){
+        $this->owner = $owner;
     }
 
     /**

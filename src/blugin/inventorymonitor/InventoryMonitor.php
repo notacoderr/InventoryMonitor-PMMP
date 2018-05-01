@@ -54,8 +54,8 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
         }
         $this->getServer()->getCommandMap()->register('inventorymonitor', $this->command);
 
-        $this->getServer()->getPluginManager()->registerEvents(new InventoryEventListener(), $this);
-        $this->getServer()->getPluginManager()->registerEvents(new PlayerEventListener(), $this);
+        $this->getServer()->getPluginManager()->registerEvents(new InventoryEventListener($this), $this);
+        $this->getServer()->getPluginManager()->registerEvents(new PlayerEventListener($this), $this);
     }
 
     public function onDisable() : void{
