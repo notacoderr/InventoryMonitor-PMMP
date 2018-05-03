@@ -300,55 +300,43 @@ class SyncInventory extends CustomInventory{
         foreach ($this->viewers as $key => $who) {
             $this->close($who);
         }
-
-        $server = Server::getInstance();
-        $player = $server->getPlayerExact($this->playerName);
-        if ($player !== null) {
-            $this->saveToPlayer($player);
-        } else {
-            $server->saveOfflinePlayerData($this->playerName, $this->saveToNBT($server->getOfflinePlayerData($this->playerName)));
-        }
+        $this->save();
         unset(self::$instances[$this->playerName]);
     }
 
-    /**
-     * @param CompoundTag $namedTag
-     *
-     * @return CompoundTag
-     */
-    public function saveToNBT(CompoundTag $namedTag) : CompoundTag{
-        $inventoryTag = new ListTag("Inventory", [], NBT::TAG_Compound);
-        for ($i = self::INV_START; $i <= self::INV_END; ++$i) {
-            $item = $this->getItem($i);
-            if (!$item->isNull()) {
-                $inventoryTag->push($item->nbtSerialize($i + 9));
+    public function save() : void{
+        $server = Server::getInstance();
+        $player = $server->getPlayerExact($this->playerName);
+        if ($player instanceof Player) {
+            $inventory = $player->getInventory();
+            for ($i = self::INV_START; $i <= self::INV_END; ++$i) {
+                $inventory->setItem($i, $this->getItem($i));
             }
-        }
-        for ($i = self::ARMOR_START; $i <= self::ARMOR_END; ++$i) {
-            $item = $this->getItem($i);
-            if (!$item->isNull()) {
-                $inventoryTag->push($item->nbtSerialize($i - self::ARMOR_START + 100));
-            }
-        }
-        $namedTag->setTag($inventoryTag);
-        return $namedTag;
-    }
 
-    /**
-     * @param Player $player
-     */
-    public function saveToPlayer(Player $player) : void{
-        $inventory = $player->getInventory();
-        for ($i = self::INV_START; $i <= self::INV_END; ++$i) {
-            $inventory->setItem($i, $this->getItem($i));
-        }
-
-        $armorInventory = $player->getArmorInventory();
-        for ($i = self::ARMOR_START; $i <= self::ARMOR_END; ++$i) {
-            $item = $this->getItem($i);
-            if (!$item->isNull()) {
-                $armorInventory->setItem($i - 46, $this->getItem($i));
+            $armorInventory = $player->getArmorInventory();
+            for ($i = self::ARMOR_START; $i <= self::ARMOR_END; ++$i) {
+                $item = $this->getItem($i);
+                if (!$item->isNull()) {
+                    $armorInventory->setItem($i - 46, $this->getItem($i));
+                }
             }
+        } else {
+            $namedTag = $server->getOfflinePlayerData($this->playerName);
+            $inventoryTag = new ListTag("Inventory", [], NBT::TAG_Compound);
+            for ($i = self::INV_START; $i <= self::INV_END; ++$i) {
+                $item = $this->getItem($i);
+                if (!$item->isNull()) {
+                    $inventoryTag->push($item->nbtSerialize($i + 9));
+                }
+            }
+            for ($i = self::ARMOR_START; $i <= self::ARMOR_END; ++$i) {
+                $item = $this->getItem($i);
+                if (!$item->isNull()) {
+                    $inventoryTag->push($item->nbtSerialize($i - self::ARMOR_START + 100));
+                }
+            }
+            $namedTag->setTag($inventoryTag);
+            $server->saveOfflinePlayerData($this->playerName,$namedTag);
         }
     }
 }
