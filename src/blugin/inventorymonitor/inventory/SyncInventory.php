@@ -228,18 +228,8 @@ class SyncInventory extends CustomInventory{
      * @return bool
      */
     public function setItem(int $index, Item $item, bool $send = true, $sync = true) : bool{
-        if ($sync && $this->playerName !== null) {
-            $player = Server::getInstance()->getPlayerExact($this->playerName);
-            if ($player !== null) {
-                $inventory = $player->getInventory();
-                if ($this->isInventorySlot($index)) {
-                    $inventory->setItem($index, $item, true);
-                } elseif ($this->isArmorSlot($index)) {
-                    $player->getArmorInventory()->setItem($index - self::ARMOR_START, $item, true);
-                } elseif ($this->isCursorSlot($index)) {
-                    $player->getCursorInventory()->setItem(0, $item, true);
-                }
-            }
+        if ($sync) {
+            $this->getSlotGroup($index)->setItem($index, $item);
         }
         return parent::setItem($index, $item, $send);
     }
@@ -284,33 +274,7 @@ class SyncInventory extends CustomInventory{
      * @return bool
      */
     public function isValidSlot(int $index) : bool{
-        return $this->isInventorySlot($index) || $this->isArmorSlot($index) || $this->isCursorSlot($index);
-    }
-
-    /**
-     * @param int $index
-     *
-     * @return bool
-     */
-    public function isInventorySlot(int $index) : bool{
-        return $index >= InvGroup::START && $index <= InvGroup::END;
-    }
-
-    /**
-     * @param int $index
-     *
-     * @return bool
-     */
-    public function isArmorSlot(int $index) : bool{
-        return $index >= ArmorGroup::START && $index <= ArmorGroup::END;
-    }
-    /**
-     * @param int $index
-     *
-     * @return bool
-     */
-    public function isCursorSlot(int $index) : bool{
-        return $index === CursorGroup::START;
+        return $this->getSlotGroup($index) instanceof SlotGroup;
     }
 
     /**
