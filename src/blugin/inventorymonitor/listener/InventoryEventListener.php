@@ -29,7 +29,7 @@ class InventoryEventListener implements Listener{
      *
      * @param EntityInventoryChangeEvent $event
      */
-    public function onEntityInventoryChangeEvent(EntityInventoryChangeEvent $event){
+    public function onEntityInventoryChangeEvent(EntityInventoryChangeEvent $event) : void{
         if (!$event->isCancelled()) {
             $player = $event->getEntity();
             if ($player instanceof Player) {
@@ -47,7 +47,7 @@ class InventoryEventListener implements Listener{
      *
      * @param InventoryTransactionEvent $event
      */
-    public function onInventoryTransactionEvent(InventoryTransactionEvent $event){
+    public function onInventoryTransactionEvent(InventoryTransactionEvent $event) : void{
         $transaction = $event->getTransaction();
         foreach ($transaction->getActions() as $key => $action) {
             if ($action instanceof SlotChangeAction) {

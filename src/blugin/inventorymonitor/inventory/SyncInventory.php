@@ -212,7 +212,7 @@ class SyncInventory extends CustomInventory{
      *
      * @return bool
      */
-    public function isValidSlot(int $index){
+    public function isValidSlot(int $index) : bool{
         return $this->isInventorySlot($index) || $this->isArmorSlot($index) || $this->isCursorSlot($index);
     }
 
@@ -221,7 +221,7 @@ class SyncInventory extends CustomInventory{
      *
      * @return bool
      */
-    public function isInventorySlot(int $index){
+    public function isInventorySlot(int $index) : bool{
         return $index >= self::INV_START && $index <= self::INV_END;
     }
 
@@ -230,7 +230,7 @@ class SyncInventory extends CustomInventory{
      *
      * @return bool
      */
-    public function isArmorSlot(int $index){
+    public function isArmorSlot(int $index) : bool{
         return $index >= self::ARMOR_START && $index <= self::ARMOR_END;
     }
 
@@ -239,11 +239,11 @@ class SyncInventory extends CustomInventory{
      *
      * @return bool
      */
-    public function isCursorSlot(int $index){
+    public function isCursorSlot(int $index) : bool{
         return $index === self::CURSOR;
     }
 
-    public function delete(){
+    public function delete() : void{
         foreach ($this->getViewers() as $key => $who) {
             $this->close($who);
         }
@@ -261,7 +261,7 @@ class SyncInventory extends CustomInventory{
     /**
      * @param CompoundTag $namedTag
      */
-    public function loadFromNBT(CompoundTag $namedTag){
+    public function loadFromNBT(CompoundTag $namedTag) : void{
         $inventoryTag = $namedTag->getListTag("Inventory");
         if ($inventoryTag !== null) {
             /** @var CompoundTag $itemTag */
@@ -279,7 +279,7 @@ class SyncInventory extends CustomInventory{
     /**
      * @param CompoundTag $namedTag
      */
-    public function saveToNBT(CompoundTag $namedTag){
+    public function saveToNBT(CompoundTag $namedTag) : void{
         $inventoryTag = new ListTag("Inventory", [], NBT::TAG_Compound);
         for ($i = self::INV_START; $i <= self::INV_END; ++$i) {
             $item = $this->getItem($i);
@@ -299,7 +299,7 @@ class SyncInventory extends CustomInventory{
     /**
      * @param Player $player
      */
-    public function loadFromPlayer(Player $player){
+    public function loadFromPlayer(Player $player) : void{
         $inventory = $player->getInventory();
         for ($i = 0; $i < 36; ++$i) {
             $item = $inventory->getItem($i);
@@ -320,7 +320,7 @@ class SyncInventory extends CustomInventory{
     /**
      * @param Player $player
      */
-    public function saveToPlayer(Player $player){
+    public function saveToPlayer(Player $player) : void{
         $inventory = $player->getInventory();
         for ($i = self::INV_START; $i <= self::INV_END; ++$i) {
             $inventory->setItem($i, $this->getItem($i));
