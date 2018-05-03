@@ -36,9 +36,6 @@ class SyncInventory extends CustomInventory{
     public const ARMOR_END = 49;
     public const CURSOR = 52;
 
-    /** @var NetworkLittleEndianNBTStream|null */
-    private static $nbtWriter = null;
-
     /** @var self[] */
     public static $instances = [];
 
@@ -82,10 +79,6 @@ class SyncInventory extends CustomInventory{
           new IntTag('z', 0),
           new StringTag('CustomName', InventoryMonitor::getInstance()->getLanguage()->translate('chest.name', [$player instanceof Player ? $player->getName() : $playerName])),
         ]);
-
-        if (self::$nbtWriter === null) {
-            self::$nbtWriter = new NetworkLittleEndianNBTStream();
-        }
     }
 
     /** @param Player $who */
@@ -118,7 +111,7 @@ class SyncInventory extends CustomInventory{
             $pk->x = $vec->x + $i;
             $pk->y = $vec->y;
             $pk->z = $vec->z;
-            $pk->namedtag = self::$nbtWriter->write($this->nbt);
+            $pk->namedtag = (new NetworkLittleEndianNBTStream())->write($this->nbt);
             $who->sendDataPacket($pk);
         }
 
