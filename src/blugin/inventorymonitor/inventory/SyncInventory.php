@@ -231,7 +231,7 @@ class SyncInventory extends CustomInventory{
                 if ($this->isInventorySlot($index)) {
                     $inventory->setItem($index, $item, true);
                 } elseif ($this->isArmorSlot($index)) {
-                    $player->getArmorInventory()->setItem($index - 46, $item, true);
+                    $player->getArmorInventory()->setItem($index - self::ARMOR_START, $item, true);
                 } elseif ($this->isCursorSlot($index)) {
                     $player->getCursorInventory()->setItem(0, $item, true);
                 }
