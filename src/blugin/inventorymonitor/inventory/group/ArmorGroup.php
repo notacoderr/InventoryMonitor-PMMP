@@ -13,10 +13,10 @@ class ArmorGroup extends SlotGroup{
     public const END = 49;
 
     /**
-     * @param int $index
+     * @param int  $index
      * @param Item $item
      */
-    public function onUpdate(int $index, Item $item): void{
+    public function onUpdate(int $index, Item $item) : void{
         $player = Server::getInstance()->getPlayerExact($this->syncInventory->getPlayerName());
         if ($player !== null) {
             $player->getArmorInventory()->setItem($index, $item, true);

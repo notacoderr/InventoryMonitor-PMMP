@@ -13,10 +13,10 @@ class InvGroup extends SlotGroup{
     public const END = 35;
 
     /**
-     * @param int $index
+     * @param int  $index
      * @param Item $item
      */
-    public function onUpdate(int $index, Item $item): void{
+    public function onUpdate(int $index, Item $item) : void{
         $player = Server::getInstance()->getPlayerExact($this->syncInventory->getPlayerName());
         if ($player !== null) {
             $player->getInventory()->setItem($index, $item, true);

@@ -8,10 +8,11 @@ use blugin\inventorymonitor\inventory\SyncInventory;
 use pocketmine\item\Item;
 
 abstract class SlotGroup{
+
     public const START = -1;
     public const END = -1;
 
-   /** @var SyncInventory $syncInventory */
+    /** @var SyncInventory $syncInventory */
     protected $syncInventory;
 
     public function __construct(SyncInventory $syncInventory){
@@ -28,7 +29,7 @@ abstract class SlotGroup{
     }
 
     /**
-     * @param int $slot
+     * @param int  $slot
      * @param Item $item
      */
     public function setItem(int $slot, Item $item) : void{
@@ -36,7 +37,7 @@ abstract class SlotGroup{
     }
 
     /**
-     * @param int $index
+     * @param int  $index
      * @param Item $item
      */
     public abstract function onUpdate(int $index, Item $item) : void;

@@ -15,7 +15,7 @@ use pocketmine\inventory\PlayerCursorInventory;
 use blugin\inventorymonitor\InventoryMonitor;
 use blugin\inventorymonitor\inventory\SyncInventory;
 use blugin\inventorymonitor\inventory\group\{
-    InvGroup, ArmorGroup, CursorGroup
+  InvGroup, ArmorGroup, CursorGroup
 };
 
 class InventoryEventListener implements Listener{

@@ -27,7 +27,7 @@ use pocketmine\network\mcpe\protocol\types\WindowTypes;
 use pocketmine\tile\Spawnable;
 use blugin\inventorymonitor\InventoryMonitor;
 use blugin\inventorymonitor\inventory\group\{
-    SlotGroup, InvGroup, ArmorGroup, CursorGroup
+  SlotGroup, InvGroup, ArmorGroup, CursorGroup
 };
 use blugin\inventorymonitor\task\SendDataPacketTask;
 
@@ -39,7 +39,7 @@ class SyncInventory extends CustomInventory{
     /**
      * @return SyncInventory[]
      */
-    public static function getAll(): array{
+    public static function getAll() : array{
         return self::$instances;
     }
 
@@ -48,13 +48,13 @@ class SyncInventory extends CustomInventory{
      *
      * @return null|SyncInventory
      */
-    public static function get(string $playerName): ?SyncInventory{
+    public static function get(string $playerName) : ?SyncInventory{
         return self::$instances[strtolower($playerName)] ?? null;
     }
 
     /**
      * @param string $playerName
-     * @param bool $includeOffline = true
+     * @param bool   $includeOffline = true
      *
      * @return null|SyncInventory
      */
@@ -69,7 +69,7 @@ class SyncInventory extends CustomInventory{
         $items = [];
         $server = Server::getInstance();
         $player = $server->getPlayerExact($playerName);
-        if ($player instanceof Player){
+        if ($player instanceof Player) {
             $inventory = $player->getInventory();
             /** @var Item[] $items */
             $items = $inventory->getContents(true);
@@ -81,7 +81,7 @@ class SyncInventory extends CustomInventory{
                     $items[$i + 46] = $item;
                 }
             }
-        } elseif($includeOffline) {
+        } elseif ($includeOffline) {
             if (file_exists("{$server->getDataPath()}players/{$playerName}.dat")) {
                 $nbt = $server->getOfflinePlayerData($playerName);
                 $inventoryTag = $nbt->getListTag("Inventory");
@@ -122,8 +122,8 @@ class SyncInventory extends CustomInventory{
     /**
      * SyncInventory constructor.
      *
-     * @param string      $playerName
-     * @param Item[]      $items
+     * @param string $playerName
+     * @param Item[] $items
      */
     public function __construct(string $playerName, array $items){
         parent::__construct(new Vector3(0, 0, 0), $items, 54, null);
@@ -214,7 +214,7 @@ class SyncInventory extends CustomInventory{
         }
         unset($this->vectors[$key]);
 
-        if(empty($this->viewers)){
+        if (empty($this->viewers)) {
             $this->delete();
         }
     }
@@ -230,7 +230,7 @@ class SyncInventory extends CustomInventory{
     public function setItem(int $index, Item $item, bool $send = true, $sync = true) : bool{
         if ($sync) {
             $slotGroup = $this->getSlotGroup($index);
-            if($slotGroup instanceof SlotGroup){
+            if ($slotGroup instanceof SlotGroup) {
                 $slotGroup->setItem($index, $item);
             }
         }
@@ -260,14 +260,14 @@ class SyncInventory extends CustomInventory{
     /**
      * @return SlotGroup[]
      */
-    public function getGroups(): array{
+    public function getGroups() : array{
         return $this->groups;
     }
 
     /**
      * @param SlotGroup[] $groups
      */
-    public function setGroups(array $groups): void{
+    public function setGroups(array $groups) : void{
         $this->groups = $groups;
     }
 
@@ -334,7 +334,7 @@ class SyncInventory extends CustomInventory{
                 }
             }
             $namedTag->setTag($inventoryTag);
-            $server->saveOfflinePlayerData($this->playerName,$namedTag);
+            $server->saveOfflinePlayerData($this->playerName, $namedTag);
         }
     }
 }
