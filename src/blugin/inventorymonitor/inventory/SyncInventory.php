@@ -160,6 +160,11 @@ class SyncInventory extends CustomInventory{
             }
         }
         unset($this->vectors[$key]);
+
+        if(empty($this->viewers)){
+            $this->delete();
+            unset(self::$instances[$this->playerName]);
+        }
     }
 
     /**
