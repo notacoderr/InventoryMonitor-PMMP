@@ -37,7 +37,7 @@ class SyncInventory extends CustomInventory{
     public const CURSOR = 52;
 
     /** @var SyncInventory[] */
-    private static $instances = [];
+    protected static $instances = [];
 
     /**
      * @return SyncInventory[]
@@ -56,13 +56,13 @@ class SyncInventory extends CustomInventory{
     }
 
     /** CompoundTag */
-    private $nbt;
+    protected $nbt;
 
     /** Vector3[] */
-    private $vectors = [];
+    protected $vectors = [];
 
     /** @var string */
-    private $playerName;
+    protected $playerName;
 
     /**
      * SyncInventory constructor.
