@@ -26,7 +26,7 @@ class PlayerEventListener implements Listener{
      */
     public function onPlayerPreLoginEvent(PlayerPreLoginEvent $event){
         $playerName = $event->getPlayer()->getLowerCaseName();
-        $syncInventory = SyncInventory::$instances[$playerName] ?? null;
+        $syncInventory = SyncInventory::get($playerName);
         if ($syncInventory !== null) {
             $namedTag = Server::getInstance()->getOfflinePlayerData($playerName);
             $syncInventory->saveToNBT($namedTag);

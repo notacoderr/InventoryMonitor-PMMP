@@ -36,8 +36,24 @@ class SyncInventory extends CustomInventory{
     public const ARMOR_END = 49;
     public const CURSOR = 52;
 
-    /** @var self[] */
-    public static $instances = [];
+    /** @var SyncInventory[] */
+    private static $instances = [];
+
+    /**
+     * @return SyncInventory[]
+     */
+    public static function getAll(): array{
+        return self::$instances;
+    }
+
+    /**
+     * @param string $playerName
+     *
+     * @return null|SyncInventory
+     */
+    public static function get(string $playerName): ?SyncInventory{
+        return self::$instances[strtolower($playerName)] ?? null;
+    }
 
     /** CompoundTag */
     private $nbt;
@@ -79,6 +95,7 @@ class SyncInventory extends CustomInventory{
           new IntTag('z', 0),
           new StringTag('CustomName', InventoryMonitor::getInstance()->getLanguage()->translate('chest.name', [$player instanceof Player ? $player->getName() : $playerName])),
         ]);
+        self::$instances[$this->playerName] = $this;
     }
 
     /** @param Player $who */
@@ -156,7 +173,6 @@ class SyncInventory extends CustomInventory{
 
         if(empty($this->viewers)){
             $this->delete();
-            unset(self::$instances[$this->playerName]);
         }
     }
 
@@ -253,6 +269,7 @@ class SyncInventory extends CustomInventory{
         } else {
             $server->saveOfflinePlayerData($this->playerName, $this->saveToNBT($server->getOfflinePlayerData($this->playerName)));
         }
+        unset(self::$instances[$this->playerName]);
     }
 
     /**

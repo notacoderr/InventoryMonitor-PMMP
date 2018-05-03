@@ -59,10 +59,9 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
     }
 
     public function onDisable() : void{
-        foreach (SyncInventory::$instances as $playerName => $syncInventory) {
+        foreach (SyncInventory::getAll() as $playerName => $syncInventory) {
             $syncInventory->delete();
         }
-        SyncInventory::$instances = [];
     }
 
     /**
@@ -87,10 +86,11 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
                         return true;
                     }
                 }
-                if (!isset(SyncInventory::$instances[$playerName])) {
-                    SyncInventory::$instances[$playerName] = new SyncInventory($playerName, $nbt);
+                $syncInventory = SyncInventory::get($playerName);
+                if ($syncInventory === null) {
+                    $syncInventory = new SyncInventory($playerName, $nbt);
                 }
-                $sender->addWindow(SyncInventory::$instances[$playerName]);
+                $sender->addWindow($syncInventory);
             } else {
                 return false;
             }
