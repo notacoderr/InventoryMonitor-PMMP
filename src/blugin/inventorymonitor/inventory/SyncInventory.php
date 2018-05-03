@@ -283,8 +283,10 @@ class SyncInventory extends CustomInventory{
 
     /**
      * @param CompoundTag $namedTag
+     *
+     * @return CompoundTag
      */
-    public function saveToNBT(CompoundTag $namedTag) : void{
+    public function saveToNBT(CompoundTag $namedTag) : CompoundTag{
         $inventoryTag = new ListTag("Inventory", [], NBT::TAG_Compound);
         for ($i = self::INV_START; $i <= self::INV_END; ++$i) {
             $item = $this->getItem($i);
@@ -299,6 +301,7 @@ class SyncInventory extends CustomInventory{
             }
         }
         $namedTag->setTag($inventoryTag);
+        return $namedTag;
     }
 
     /**
