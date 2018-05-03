@@ -26,15 +26,12 @@ use pocketmine\network\mcpe\protocol\{
 use pocketmine\network\mcpe\protocol\types\WindowTypes;
 use pocketmine\tile\Spawnable;
 use blugin\inventorymonitor\InventoryMonitor;
+use blugin\inventorymonitor\inventory\group\{
+    SlotGroup, InvGroup, ArmorGroup, CursorGroup
+};
 use blugin\inventorymonitor\task\SendDataPacketTask;
 
 class SyncInventory extends CustomInventory{
-
-    public const INV_START = 0;
-    public const INV_END = 35;
-    public const ARMOR_START = 46;
-    public const ARMOR_END = 49;
-    public const CURSOR = 52;
 
     /** @var SyncInventory[] */
     protected static $instances = [];
@@ -97,7 +94,7 @@ class SyncInventory extends CustomInventory{
                         if ($slot > 8 && $slot < 44) { // 9-44 is PlayerInventory slot
                             $items[$slot - 9] = Item::nbtDeserialize($itemTag);
                         } elseif ($slot > 99 and $slot < 104) { // 100-103 is ArmorInventory slot
-                            $items[$slot + self::ARMOR_START - 100] = Item::nbtDeserialize($itemTag);
+                            $items[$slot + ArmorGroup::START - 100] = Item::nbtDeserialize($itemTag);
                         }
                     }
                 }
@@ -119,6 +116,9 @@ class SyncInventory extends CustomInventory{
     /** @var string */
     protected $playerName;
 
+    /** @var SlotGroup[] */
+    protected $groups = [];
+
     /**
      * SyncInventory constructor.
      *
@@ -127,6 +127,10 @@ class SyncInventory extends CustomInventory{
      */
     public function __construct(string $playerName, array $items){
         parent::__construct(new Vector3(0, 0, 0), $items, 54, null);
+
+        $this->groups[] = new InvGroup($this);
+        $this->groups[] = new ArmorGroup($this);
+        $this->groups[] = new CursorGroup($this);
 
         $this->playerName = strtolower($playerName);
         $this->nbt = new CompoundTag('', [
@@ -261,6 +265,20 @@ class SyncInventory extends CustomInventory{
     }
 
     /**
+     * @return SlotGroup[]
+     */
+    public function getGroups(): array{
+        return $this->groups;
+    }
+
+    /**
+     * @param SlotGroup[] $groups
+     */
+    public function setGroups(array $groups): void{
+        $this->groups = $groups;
+    }
+
+    /**
      * @param int $index
      *
      * @return bool
@@ -275,7 +293,7 @@ class SyncInventory extends CustomInventory{
      * @return bool
      */
     public function isInventorySlot(int $index) : bool{
-        return $index >= self::INV_START && $index <= self::INV_END;
+        return $index >= InvGroup::START && $index <= InvGroup::END;
     }
 
     /**
@@ -284,16 +302,29 @@ class SyncInventory extends CustomInventory{
      * @return bool
      */
     public function isArmorSlot(int $index) : bool{
-        return $index >= self::ARMOR_START && $index <= self::ARMOR_END;
+        return $index >= ArmorGroup::START && $index <= ArmorGroup::END;
     }
-
     /**
      * @param int $index
      *
      * @return bool
      */
     public function isCursorSlot(int $index) : bool{
-        return $index === self::CURSOR;
+        return $index === CursorGroup::START;
+    }
+
+    /**
+     * @param int $index
+     *
+     * @return null|SlotGroup
+     */
+    public function getSlotGroup(int $index) : ?SlotGroup{
+        foreach ($this->groups as $key => $group) {
+            if ($group->validate($index)) {
+                return $group;
+            }
+        }
+        return null;
     }
 
     public function delete() : void{
@@ -309,12 +340,12 @@ class SyncInventory extends CustomInventory{
         $player = $server->getPlayerExact($this->playerName);
         if ($player instanceof Player) {
             $inventory = $player->getInventory();
-            for ($i = self::INV_START; $i <= self::INV_END; ++$i) {
+            for ($i = InvGroup::START; $i <= InvGroup::END; ++$i) {
                 $inventory->setItem($i, $this->getItem($i));
             }
 
             $armorInventory = $player->getArmorInventory();
-            for ($i = self::ARMOR_START; $i <= self::ARMOR_END; ++$i) {
+            for ($i = ArmorGroup::START; $i <= ArmorGroup::END; ++$i) {
                 $item = $this->getItem($i);
                 if (!$item->isNull()) {
                     $armorInventory->setItem($i - 46, $this->getItem($i));
@@ -323,16 +354,16 @@ class SyncInventory extends CustomInventory{
         } else {
             $namedTag = $server->getOfflinePlayerData($this->playerName);
             $inventoryTag = new ListTag("Inventory", [], NBT::TAG_Compound);
-            for ($i = self::INV_START; $i <= self::INV_END; ++$i) {
+            for ($i = InvGroup::START; $i <= InvGroup::END; ++$i) {
                 $item = $this->getItem($i);
                 if (!$item->isNull()) {
                     $inventoryTag->push($item->nbtSerialize($i + 9));
                 }
             }
-            for ($i = self::ARMOR_START; $i <= self::ARMOR_END; ++$i) {
+            for ($i = ArmorGroup::START; $i <= ArmorGroup::END; ++$i) {
                 $item = $this->getItem($i);
                 if (!$item->isNull()) {
-                    $inventoryTag->push($item->nbtSerialize($i - self::ARMOR_START + 100));
+                    $inventoryTag->push($item->nbtSerialize($i - ArmorGroup::START + 100));
                 }
             }
             $namedTag->setTag($inventoryTag);

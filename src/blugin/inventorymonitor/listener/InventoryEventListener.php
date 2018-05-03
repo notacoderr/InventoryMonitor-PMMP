@@ -14,6 +14,9 @@ use pocketmine\inventory\transaction\action\SlotChangeAction;
 use pocketmine\inventory\PlayerCursorInventory;
 use blugin\inventorymonitor\InventoryMonitor;
 use blugin\inventorymonitor\inventory\SyncInventory;
+use blugin\inventorymonitor\inventory\group\{
+    InvGroup, ArmorGroup, CursorGroup
+};
 
 class InventoryEventListener implements Listener{
 
@@ -35,7 +38,7 @@ class InventoryEventListener implements Listener{
             if ($player instanceof Player) {
                 $syncInventory = SyncInventory::get($player->getName());
                 if ($syncInventory !== null) {
-                    $slot = $event->getSlot() + ($event instanceof EntityArmorChangeEvent ? SyncInventory::ARMOR_START : SyncInventory::INV_START);
+                    $slot = $event->getSlot() + ($event instanceof EntityArmorChangeEvent ? ArmorGroup::START : InvGroup::START);
                     $syncInventory->setItem($slot, $event->getNewItem(), true, false);
                 }
             }
@@ -60,7 +63,7 @@ class InventoryEventListener implements Listener{
                     $player = $inventory->getHolder();
                     $syncInventory = SyncInventory::get($player->getName());
                     if ($syncInventory !== null) {
-                        $syncInventory->setItem(SyncInventory::CURSOR, $action->getTargetItem(), true, false);
+                        $syncInventory->setItem(CursorGroup::START, $action->getTargetItem(), true, false);
                     }
                 }
             }
