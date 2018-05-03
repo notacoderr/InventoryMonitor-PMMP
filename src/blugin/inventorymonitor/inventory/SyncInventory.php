@@ -131,7 +131,6 @@ class SyncInventory extends CustomInventory{
         $this->playerName = strtolower($playerName);
         $this->nbt = new CompoundTag('', [
           new StringTag('id', 'Chest'),
-          new StringTag('CustomName', InventoryMonitor::getInstance()->getLanguage()->translate('chest.name', [$playerName])),
         ]);
         self::$instances[$this->playerName] = $this;
     }
@@ -161,6 +160,8 @@ class SyncInventory extends CustomInventory{
             $this->nbt->setInt('z', $vec->z);
             $this->nbt->setInt('pairx', $vec->x + (1 - $i));
             $this->nbt->setInt('pairz', $vec->z);
+            $player = Server::getInstance()->getPlayerExact($this->playerName);
+            $this->nbt->setString('CustomName', InventoryMonitor::getInstance()->getLanguage()->translate('chest.name', [$player instanceof Player ? $player->getName() : $this->playerName]));
 
             $pk = new BlockEntityDataPacket();
             $pk->x = $vec->x + $i;
