@@ -249,17 +249,16 @@ class SyncInventory extends CustomInventory{
     }
 
     public function delete() : void{
-        foreach ($this->getViewers() as $key => $who) {
+        foreach ($this->viewers as $key => $who) {
             $this->close($who);
         }
 
-        $player = Server::getInstance()->getPlayerExact($this->playerName);
+        $server = Server::getInstance();
+        $player = $server->getPlayerExact($this->playerName);
         if ($player !== null) {
             $this->saveToPlayer($player);
         } else {
-            $namedTag = $this->getServer()->getOfflinePlayerData($playerName);
-            $this->saveToNBT($namedTag);
-            $this->getServer()->saveOfflinePlayerData($playerName, $namedTag);
+            $server->saveOfflinePlayerData($this->playerName, $this->saveToNBT($server->getOfflinePlayerData($this->playerName)));
         }
     }
 
