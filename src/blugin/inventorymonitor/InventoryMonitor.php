@@ -75,22 +75,12 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
         if ($sender instanceof Player) {
             if (isset($args[0])) {
-                $playerName = strtolower($args[0]);
-                $nbt = null;
-                $player = $this->getServer()->getPlayerExact($playerName);
-                if ($player === null) {
-                    if (file_exists("{$this->getServer()->getDataPath()}players/{$playerName}.dat")) {
-                        $nbt = $this->getServer()->getOfflinePlayerData($playerName);
-                    } else {
-                        $sender->sendMessage($this->language->translate('commands.generic.player.notFound', [$args[0]]));
-                        return true;
-                    }
-                }
-                $syncInventory = SyncInventory::get($playerName);
+                $syncInventory = SyncInventory::load(strtolower($args[0]));
                 if ($syncInventory === null) {
-                    $syncInventory = new SyncInventory($playerName, $nbt);
+                    $sender->sendMessage($this->language->translate('commands.generic.player.notFound', [$args[0]]));
+                } else {
+                    $sender->addWindow($syncInventory);
                 }
-                $sender->addWindow($syncInventory);
             } else {
                 return false;
             }
