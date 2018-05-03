@@ -229,7 +229,10 @@ class SyncInventory extends CustomInventory{
      */
     public function setItem(int $index, Item $item, bool $send = true, $sync = true) : bool{
         if ($sync) {
-            $this->getSlotGroup($index)->setItem($index, $item);
+            $slotGroup = $this->getSlotGroup($index);
+            if($slotGroup instanceof SlotGroup){
+                $slotGroup->setItem($index, $item);
+            }
         }
         return parent::setItem($index, $item, $send);
     }
