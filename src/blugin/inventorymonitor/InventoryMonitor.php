@@ -60,18 +60,7 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 
     public function onDisable() : void{
         foreach (SyncInventory::$instances as $playerName => $syncInventory) {
-            foreach ($syncInventory->getViewers() as $key => $who) {
-                $syncInventory->close($who);
-            }
-
-            $player = $this->getServer()->getPlayerExact($playerName);
-            if ($player !== null) {
-                $syncInventory->saveToPlayer($player);
-            } else {
-                $namedTag = $this->getServer()->getOfflinePlayerData($playerName);
-                $syncInventory->saveToNBT($namedTag);
-                $this->getServer()->saveOfflinePlayerData($playerName, $namedTag);
-            }
+            $syncInventory->delete();
         }
         SyncInventory::$instances = [];
     }

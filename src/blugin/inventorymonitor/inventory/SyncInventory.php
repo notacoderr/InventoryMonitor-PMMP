@@ -243,6 +243,21 @@ class SyncInventory extends CustomInventory{
         return $index === self::CURSOR;
     }
 
+    public function delete(){
+        foreach ($this->getViewers() as $key => $who) {
+            $this->close($who);
+        }
+
+        $player = Server::getInstance()->getPlayerExact($this->playerName);
+        if ($player !== null) {
+            $this->saveToPlayer($player);
+        } else {
+            $namedTag = $this->getServer()->getOfflinePlayerData($playerName);
+            $this->saveToNBT($namedTag);
+            $this->getServer()->saveOfflinePlayerData($playerName, $namedTag);
+        }
+    }
+
     /**
      * @param CompoundTag $namedTag
      */
