@@ -18,7 +18,7 @@ use pocketmine\nbt\{
   NBT, NetworkLittleEndianNBTStream
 };
 use pocketmine\nbt\tag\{
-  CompoundTag, ListTag, IntTag, StringTag
+  CompoundTag, ListTag, StringTag
 };
 use pocketmine\network\mcpe\protocol\{
   UpdateBlockPacket, BlockEntityDataPacket, ContainerOpenPacket, InventoryContentPacket
@@ -131,9 +131,6 @@ class SyncInventory extends CustomInventory{
         $this->playerName = strtolower($playerName);
         $this->nbt = new CompoundTag('', [
           new StringTag('id', 'Chest'),
-          new IntTag('x', 0),
-          new IntTag('y', 0),
-          new IntTag('z', 0),
           new StringTag('CustomName', InventoryMonitor::getInstance()->getLanguage()->translate('chest.name', [$playerName])),
         ]);
         self::$instances[$this->playerName] = $this;
