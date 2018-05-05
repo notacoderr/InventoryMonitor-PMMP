@@ -51,8 +51,7 @@ class InventoryEventListener implements Listener{
      * @param InventoryTransactionEvent $event
      */
     public function onInventoryTransactionEvent(InventoryTransactionEvent $event) : void{
-        $transaction = $event->getTransaction();
-        foreach ($transaction->getActions() as $key => $action) {
+        foreach ($event->getTransaction()->getActions() as $key => $action) {
             if ($action instanceof SlotChangeAction) {
                 $inventory = $action->getInventory();
                 if ($inventory instanceof SyncInventory) {
@@ -60,8 +59,7 @@ class InventoryEventListener implements Listener{
                         $event->setCancelled();
                     }
                 } elseif ($inventory instanceof PlayerCursorInventory) {
-                    $player = $inventory->getHolder();
-                    $syncInventory = SyncInventory::get($player->getName());
+                    $syncInventory = SyncInventory::get($inventory->getHolder()->getName());
                     if ($syncInventory !== null) {
                         $syncInventory->setItem(CursorGroup::START, $action->getTargetItem(), true, false);
                     }
