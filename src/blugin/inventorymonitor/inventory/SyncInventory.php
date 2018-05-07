@@ -132,6 +132,14 @@ class SyncInventory extends CustomInventory{
         $this->groups[] = new ArmorGroup($this);
         $this->groups[] = new CursorGroup($this);
 
+        $borderItem = Item::get(Block::SKULL_BLOCK);
+        $borderItem->setCustomName('');
+        for ($i = 0; $i < 54; ++$i) {
+            if (!$this->isValidSlot($i)) {
+                $this->setItem($i, clone $borderItem);
+            }
+        }
+
         $this->playerName = strtolower($playerName);
         $this->nbt = new CompoundTag('', [
           new StringTag('id', 'Chest'),
