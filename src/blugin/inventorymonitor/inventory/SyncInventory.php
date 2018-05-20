@@ -104,7 +104,7 @@ class SyncInventory extends CustomInventory{
         } else {
             return null;
         }
-        return new SyncInventory($player->getName(), $items);
+        return new SyncInventory($playerName, $items);
     }
 
     /** CompoundTag */
