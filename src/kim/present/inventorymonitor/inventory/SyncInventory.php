@@ -246,7 +246,7 @@ class SyncInventory extends CustomInventory{
 		$pk2 = new InventoryContentPacket();
 		$pk2->items = $this->getContents(true);
 		$pk2->windowId = $pk->windowId;
-		Server::getInstance()->getScheduler()->scheduleDelayedTask(new SendDataPacketTask($who, $pk, $pk2), 5);
+		InventoryMonitor::getInstance()->getScheduler()->scheduleDelayedTask(new SendDataPacketTask($who, $pk, $pk2), 5);
 	}
 
 	/**
