@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace blugin\inventorymonitor;
+namespace kim\present\inventorymonitor;
 
-use blugin\inventorymonitor\inventory\SyncInventory;
-use blugin\inventorymonitor\lang\PluginLang;
-use blugin\inventorymonitor\listener\{
+use kim\present\inventorymonitor\inventory\SyncInventory;
+use kim\present\inventorymonitor\lang\PluginLang;
+use kim\present\inventorymonitor\listener\{
 	InventoryEventListener, PlayerEventListener
 };
 use pocketmine\command\{

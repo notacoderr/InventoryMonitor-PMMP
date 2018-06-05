@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace blugin\inventorymonitor\inventory\group;
+namespace kim\present\inventorymonitor\inventory\group;
 
-use blugin\inventorymonitor\inventory\SyncInventory;
+use kim\present\inventorymonitor\inventory\SyncInventory;
 use pocketmine\item\Item;
 
 abstract class SlotGroup{

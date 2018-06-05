@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace blugin\inventorymonitor\listener;
+namespace kim\present\inventorymonitor\listener;
 
-use blugin\inventorymonitor\inventory\SyncInventory;
-use blugin\inventorymonitor\InventoryMonitor;
+use kim\present\inventorymonitor\inventory\SyncInventory;
+use kim\present\inventorymonitor\InventoryMonitor;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerPreLoginEvent;
 
