@@ -1,14 +1,14 @@
 ---
-name:             InventoryMonitor
-main:             blugin\inventorymonitor\InventoryMonitor
-version:          1.0.8
-api:              [3.0.0-ALPHA12]
-author:           PresentKim
-website:          https://github.com/Blugin/InventoryMonitor-PMMP
-description:      A plugin monitoring player's inventory
+name: InventoryMonitor
+main: blugin\inventorymonitor\InventoryMonitor
+version: 1.0.8
+api: [3.0.0-ALPHA12]
+author: PresentKim
+website: https://github.com/Blugin/InventoryMonitor-PMMP
+description: Monitoring player inventory
 
 permissions:
   inventorymonitor.cmd:
-    description:  "Open player's inventory"
-    default:      op
+    description: Open player inventory
+    default: op
 ...
