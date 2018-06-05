@@ -20,7 +20,7 @@ A plugin monitoring player's inventory for PocketMine-MP
 <br/><br/>
   
 ## Required API
-- PocketMine-MP : higher than [Build #937](https://jenkins.pmmp.io/job/PocketMine-MP/937)
+- PocketMine-MP : higher than [Build #1105](https://jenkins.pmmp.io/job/PocketMine-MP/1105)
   
 <br/><br/>
   
