@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace blugin\inventorymonitor\inventory\group;
+namespace kim\present\inventorymonitor\inventory\group;
 
 use pocketmine\item\Item;
 use pocketmine\Server;

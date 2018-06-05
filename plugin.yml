@@ -1,10 +1,10 @@
 ---
 name: InventoryMonitor
-main: blugin\inventorymonitor\InventoryMonitor
+main: kim\present\inventorymonitor\InventoryMonitor
 version: 1.0.8
 api: [3.0.0-ALPHA12]
 author: PresentKim
-website: https://github.com/Blugin/InventoryMonitor-PMMP
+website: https://github.com/PresentKim/InventoryMonitor-PMMP
 description: Monitoring player inventory
 
 permissions:

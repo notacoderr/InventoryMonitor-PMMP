@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace blugin\inventorymonitor\task;
+namespace kim\present\inventorymonitor\task;
 
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\Player;

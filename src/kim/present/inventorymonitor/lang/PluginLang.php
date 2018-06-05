@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace blugin\inventorymonitor\lang;
+namespace kim\present\inventorymonitor\lang;
 
-use blugin\inventorymonitor\InventoryMonitor;
+use kim\present\inventorymonitor\InventoryMonitor;
 
 class PluginLang{
 	public const FALLBACK_LANGUAGE = "eng";

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace blugin\inventorymonitor\inventory;
+namespace kim\present\inventorymonitor\inventory;
 
-use blugin\inventorymonitor\inventory\group\{
+use kim\present\inventorymonitor\inventory\group\{
 	ArmorGroup, CursorGroup, InvGroup, SlotGroup
 };
-use blugin\inventorymonitor\InventoryMonitor;
-use blugin\inventorymonitor\task\SendDataPacketTask;
+use kim\present\inventorymonitor\InventoryMonitor;
+use kim\present\inventorymonitor\task\SendDataPacketTask;
 use pocketmine\block\{
 	Block, BlockFactory
 };
