@@ -47,6 +47,8 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 		if(!file_exists($dataFolder)){
 			mkdir($dataFolder, 0777, true);
 		}
+		$this->saveDefaultConfig();
+		$this->reloadConfig();
 		$this->language = new PluginLang($this);
 
 		if($this->command !== null){
