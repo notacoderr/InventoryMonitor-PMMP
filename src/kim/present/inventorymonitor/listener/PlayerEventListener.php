@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace kim\present\inventorymonitor\listener;
 
+use kim\present\inventorymonitor\form\SelectPlayerForm;
 use kim\present\inventorymonitor\inventory\SyncInventory;
 use kim\present\inventorymonitor\InventoryMonitor;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerPreLoginEvent;
+use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\network\mcpe\protocol\ModalFormResponsePacket;
 
 class PlayerEventListener implements Listener{
 	/**
@@ -34,6 +37,30 @@ class PlayerEventListener implements Listener{
 		$syncInventory = SyncInventory::get($playerName);
 		if($syncInventory !== null){
 			$syncInventory->save();
+		}
+	}
+
+	/**
+	 * @priority HIGHEST
+	 *
+	 * @param DataPacketReceiveEvent $event
+	 */
+	public function onDataPacketReceiveEvent(DataPacketReceiveEvent $event) : void{
+		$pk = $event->getPacket();
+		if($pk instanceof ModalFormResponsePacket){
+			$formId = (int) $this->owner->getConfig()->getNested("formid.main");
+			if($pk->formId === $formId){
+				$player = $event->getPlayer();
+				$form = SelectPlayerForm::getInstance($player);
+				if($form !== null){
+					/** @var SelectPlayerForm $newForm */
+					$newForm = $form->handleResponse($player, json_decode($pk->formData));
+					if($newForm !== null){
+						$newForm->sendForm();
+					}
+				}
+				$event->setCancelled();
+			}
 		}
 	}
 }
