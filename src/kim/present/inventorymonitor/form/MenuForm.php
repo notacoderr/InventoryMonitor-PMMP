@@ -23,8 +23,8 @@ declare(strict_types=1);
 
 namespace pocketmine\form;
 
+use kim\present\inventorymonitor\utils\Utils;
 use pocketmine\Player;
-use pocketmine\utils\Utils;
 
 /**
  * This form type presents a menu to the user with a list of options on it. The user may select an option or close the

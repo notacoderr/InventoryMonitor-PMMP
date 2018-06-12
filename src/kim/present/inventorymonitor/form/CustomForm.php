@@ -23,9 +23,9 @@ declare(strict_types=1);
 
 namespace pocketmine\form;
 
+use kim\present\inventorymonitor\utils\Utils;
 use pocketmine\form\element\CustomFormElement;
 use pocketmine\Player;
-use pocketmine\utils\Utils;
 
 abstract class CustomForm extends Form{
 
