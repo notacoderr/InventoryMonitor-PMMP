@@ -31,14 +31,14 @@ use pocketmine\Player;
 abstract class ModalForm extends Form{
 
 	/** @var string */
-	private $content;
+	protected $content;
 	/** @var string */
-	private $button1;
+	protected $button1;
 	/** @var string */
-	private $button2;
+	protected $button2;
 
 	/** @var bool|null */
-	private $choice;
+	protected $choice;
 
 	/**
 	 * @param string $title         Text to put on the title of the dialog.

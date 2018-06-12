@@ -30,7 +30,7 @@ use pocketmine\Player;
 abstract class CustomForm extends Form{
 
 	/** @var CustomFormElement[] */
-	private $elements;
+	protected $elements;
 
 	/**
 	 * @param string              $title

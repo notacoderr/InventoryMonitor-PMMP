@@ -35,10 +35,10 @@ abstract class MenuForm extends Form{
 	/** @var string */
 	protected $content;
 	/** @var MenuOption[] */
-	private $options;
+	protected $options;
 
 	/** @var int|null */
-	private $selectedOption;
+	protected $selectedOption;
 
 	/**
 	 * @param string       $title
