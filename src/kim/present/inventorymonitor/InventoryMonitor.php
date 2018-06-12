@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kim\present\inventorymonitor;
 
+use kim\present\inventorymonitor\form\SelectPlayerForm;
 use kim\present\inventorymonitor\inventory\SyncInventory;
 use kim\present\inventorymonitor\lang\PluginLang;
 use kim\present\inventorymonitor\listener\{
@@ -83,16 +84,8 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 	 */
 	public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
 		if($sender instanceof Player){
-			if(isset($args[0])){
-				$syncInventory = SyncInventory::load(strtolower($args[0]));
-				if($syncInventory === null){
-					$sender->sendMessage($this->language->translate('commands.generic.player.notFound', [$args[0]]));
-				}else{
-					$sender->addWindow($syncInventory);
-				}
-			}else{
-				return false;
-			}
+			$selectForm = new SelectPlayerForm($this, $sender);
+			$selectForm->sendForm();
 		}else{
 			$sender->sendMessage($this->language->translate('commands.generic.onlyPlayer'));
 		}
