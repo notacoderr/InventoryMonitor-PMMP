@@ -21,7 +21,7 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\form;
+namespace kim\present\inventorymonitor\form;
 
 /**
  * Represents a custom form which can be shown in the Settings menu on the client. This is exactly the same as a regular

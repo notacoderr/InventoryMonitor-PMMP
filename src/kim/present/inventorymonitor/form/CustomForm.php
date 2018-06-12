@@ -21,10 +21,10 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\form;
+namespace kim\present\inventorymonitor\form;
 
+use kim\present\inventorymonitor\form\element\CustomFormElement;
 use kim\present\inventorymonitor\utils\Utils;
-use pocketmine\form\element\CustomFormElement;
 use pocketmine\Player;
 
 abstract class CustomForm extends Form{

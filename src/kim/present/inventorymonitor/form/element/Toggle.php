@@ -21,7 +21,7 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\form\element;
+namespace kim\present\inventorymonitor\form\element;
 
 /**
  * Represents a UI on/off switch. The switch may have a default value.

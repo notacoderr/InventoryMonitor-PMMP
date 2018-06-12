@@ -21,7 +21,7 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\form\element;
+namespace kim\present\inventorymonitor\form\element;
 
 /**
  * Base class for UI elements which can be placed on custom forms.

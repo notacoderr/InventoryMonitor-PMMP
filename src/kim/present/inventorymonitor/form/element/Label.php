@@ -21,7 +21,7 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\form\element;
+namespace kim\present\inventorymonitor\form\element;
 
 /**
  * Element which displays some text on a form.

@@ -21,7 +21,7 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\form\element;
+namespace kim\present\inventorymonitor\form\element;
 
 /**
  * Element which accepts text input. The text-box can have a default value, and may also have a text hint when there is
