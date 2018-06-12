@@ -73,6 +73,7 @@ class Input extends CustomFormElement{
 
 	/**
 	 * Returns the text shown in the text-box when the box is not focused and there is no text in it.
+	 *
 	 * @return string
 	 */
 	public function getHintText() : string{
@@ -81,6 +82,7 @@ class Input extends CustomFormElement{
 
 	/**
 	 * Returns the text which will be in the text-box by default.
+	 *
 	 * @return string
 	 */
 	public function getDefaultText() : string{

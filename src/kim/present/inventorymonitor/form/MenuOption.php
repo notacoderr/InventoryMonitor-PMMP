@@ -46,10 +46,6 @@ class MenuOption implements \JsonSerializable{
 		return $this->text;
 	}
 
-	public function hasImage() : bool{
-		return $this->image !== null;
-	}
-
 	public function getImage() : ?FormIcon{
 		return $this->image;
 	}
@@ -64,6 +60,10 @@ class MenuOption implements \JsonSerializable{
 		}
 
 		return $json;
+	}
+
+	public function hasImage() : bool{
+		return $this->image !== null;
 	}
 
 }

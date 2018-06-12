@@ -24,6 +24,7 @@ declare(strict_types=1);
 /**
  * API for Minecraft: Bedrock custom UI (forms)
  */
+
 namespace pocketmine\form;
 
 use pocketmine\Player;
@@ -47,20 +48,6 @@ abstract class Form implements \JsonSerializable{
 	}
 
 	/**
-	 * Returns the type used to show this form to clients
-	 * @return string
-	 */
-	abstract public function getType() : string;
-
-	/**
-	 * Returns the text shown on the form title-bar.
-	 * @return string
-	 */
-	public function getTitle() : string{
-		return $this->title;
-	}
-
-	/**
 	 * Handles a form response from a player. Plugins should not override this method, override {@link onSubmit}
 	 * instead.
 	 *
@@ -79,6 +66,7 @@ abstract class Form implements \JsonSerializable{
 	 * they wish.
 	 *
 	 * @param Player $player
+	 *
 	 * @return Form|null a form which will be opened immediately (before queued forms) as a response to this form, or null if not applicable.
 	 */
 	abstract public function onSubmit(Player $player) : ?Form;
@@ -125,7 +113,24 @@ abstract class Form implements \JsonSerializable{
 	}
 
 	/**
+	 * Returns the type used to show this form to clients
+	 *
+	 * @return string
+	 */
+	abstract public function getType() : string;
+
+	/**
+	 * Returns the text shown on the form title-bar.
+	 *
+	 * @return string
+	 */
+	public function getTitle() : string{
+		return $this->title;
+	}
+
+	/**
 	 * Serializes additional data needed to show this form to clients.
+	 *
 	 * @return array
 	 */
 	abstract protected function serializeFormData() : array;

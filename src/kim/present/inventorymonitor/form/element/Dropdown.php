@@ -51,13 +51,6 @@ class Dropdown extends CustomFormElement{
 	}
 
 	/**
-	 * @return int|null
-	 */
-	public function getValue() : ?int{
-		return $this->selectedOption;
-	}
-
-	/**
 	 * @param int $value
 	 *
 	 * @throws \TypeError
@@ -71,18 +64,8 @@ class Dropdown extends CustomFormElement{
 	}
 
 	/**
-	 * Returns the text of the option at the specified index, or null if it doesn't exist.
-	 *
-	 * @param int $index
-	 *
-	 * @return string|null
-	 */
-	public function getOption(int $index) : ?string{
-		return $this->options[$index] ?? null;
-	}
-
-	/**
 	 * Returns the text of the selected option.
+	 *
 	 * @return string
 	 */
 	public function getSelectedOption() : string{
@@ -98,6 +81,24 @@ class Dropdown extends CustomFormElement{
 		}
 
 		throw new \InvalidStateException("No option found at index $index");
+	}
+
+	/**
+	 * @return int|null
+	 */
+	public function getValue() : ?int{
+		return $this->selectedOption;
+	}
+
+	/**
+	 * Returns the text of the option at the specified index, or null if it doesn't exist.
+	 *
+	 * @param int $index
+	 *
+	 * @return string|null
+	 */
+	public function getOption(int $index) : ?string{
+		return $this->options[$index] ?? null;
 	}
 
 	/**

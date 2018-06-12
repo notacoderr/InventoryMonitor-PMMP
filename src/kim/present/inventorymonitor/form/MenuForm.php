@@ -57,26 +57,6 @@ abstract class MenuForm extends Form{
 		return Form::TYPE_MENU;
 	}
 
-	public function getOption(int $position) : ?MenuOption{
-		return $this->options[$position] ?? null;
-	}
-
-	/**
-	 * Returns the index of the option selected by the user.
-	 * @return int|null
-	 */
-	public function getSelectedOptionIndex() : ?int{
-		return $this->selectedOption;
-	}
-
-	/**
-	 * Sets the selected option to the specified index or null. null = no selection.
-	 * @param int $option
-	 */
-	public function setSelectedOptionIndex(int $option) : void{
-		$this->selectedOption = $option;
-	}
-
 	/**
 	 * Returns the menu option selected by the user.
 	 *
@@ -99,27 +79,21 @@ abstract class MenuForm extends Form{
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Returns the index of the option selected by the user.
 	 *
-	 * {@link getSelectedOption} can be used to get the option selected by the user.
+	 * @return int|null
 	 */
-	public function onSubmit(Player $player) : ?Form{
-		return null;
+	public function getSelectedOptionIndex() : ?int{
+		return $this->selectedOption;
 	}
 
-	/**
-	 * Called when a player clicks the close button on this form without selecting an option.
-	 * @param Player $player
-	 * @return Form|null a form which will be opened immediately (before queued forms) as a response to this form, or null if not applicable.
-	 */
-	public function onClose(Player $player) : ?Form{
-		return null;
+	public function getOption(int $position) : ?MenuOption{
+		return $this->options[$position] ?? null;
 	}
 
 	public function clearResponseData() : void{
 		$this->selectedOption = null;
 	}
-
 
 	final public function handleResponse(Player $player, $data) : ?Form{
 		if($data === null){
@@ -135,6 +109,35 @@ abstract class MenuForm extends Form{
 		}
 
 		throw new \UnexpectedValueException("Expected int or NULL, got " . gettype($data));
+	}
+
+	/**
+	 * Called when a player clicks the close button on this form without selecting an option.
+	 *
+	 * @param Player $player
+	 *
+	 * @return Form|null a form which will be opened immediately (before queued forms) as a response to this form, or null if not applicable.
+	 */
+	public function onClose(Player $player) : ?Form{
+		return null;
+	}
+
+	/**
+	 * Sets the selected option to the specified index or null. null = no selection.
+	 *
+	 * @param int $option
+	 */
+	public function setSelectedOptionIndex(int $option) : void{
+		$this->selectedOption = $option;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * {@link getSelectedOption} can be used to get the option selected by the user.
+	 */
+	public function onSubmit(Player $player) : ?Form{
+		return null;
 	}
 
 	public function serializeFormData() : array{

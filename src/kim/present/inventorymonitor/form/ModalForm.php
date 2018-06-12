@@ -41,10 +41,10 @@ abstract class ModalForm extends Form{
 	private $choice;
 
 	/**
-	 * @param string $title Text to put on the title of the dialog.
-	 * @param string $text Text to put in the body.
+	 * @param string $title         Text to put on the title of the dialog.
+	 * @param string $text          Text to put in the body.
 	 * @param string $yesButtonText Text to show on the "Yes" button. Defaults to client-translated "Yes" string.
-	 * @param string $noButtonText Text to show on the "No" button. Defaults to client-translated "No" string.
+	 * @param string $noButtonText  Text to show on the "No" button. Defaults to client-translated "No" string.
 	 */
 	public function __construct(string $title, string $text, string $yesButtonText = "gui.yes", string $noButtonText = "gui.no"){
 		parent::__construct($title);
@@ -85,19 +85,9 @@ abstract class ModalForm extends Form{
 		$this->choice = $choice;
 	}
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * {@link getChoice} can be used in here to find out which option the player selected.
-	 */
-	public function onSubmit(Player $player) : ?Form{
-		return null;
-	}
-
 	public function clearResponseData() : void{
 		$this->choice = null;
 	}
-
 
 	final public function handleResponse(Player $player, $data) : ?Form{
 		if(!is_bool($data)){
@@ -106,6 +96,15 @@ abstract class ModalForm extends Form{
 
 		$this->setChoice($data);
 		return $this->onSubmit($player);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * {@link getChoice} can be used in here to find out which option the player selected.
+	 */
+	public function onSubmit(Player $player) : ?Form{
+		return null;
 	}
 
 	public function serializeFormData() : array{

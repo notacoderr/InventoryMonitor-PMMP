@@ -66,20 +66,6 @@ abstract class CustomForm extends Form{
 		return $this->elements;
 	}
 
-	public function onSubmit(Player $player) : ?Form{
-		return null;
-	}
-
-	/**
-	 * Called when a player closes the form without submitting it.
-	 * @param Player $player
-	 * @return Form|null a form which will be opened immediately (before queued forms) as a response to this form, or null if not applicable.
-	 */
-	public function onClose(Player $player) : ?Form{
-		return null;
-	}
-
-
 	public function handleResponse(Player $player, $data) : ?Form{
 		if($data === null){
 			return $this->onClose($player);
@@ -95,6 +81,21 @@ abstract class CustomForm extends Form{
 		}
 
 		throw new \UnexpectedValueException("Expected array or NULL, got " . gettype($data));
+	}
+
+	/**
+	 * Called when a player closes the form without submitting it.
+	 *
+	 * @param Player $player
+	 *
+	 * @return Form|null a form which will be opened immediately (before queued forms) as a response to this form, or null if not applicable.
+	 */
+	public function onClose(Player $player) : ?Form{
+		return null;
+	}
+
+	public function onSubmit(Player $player) : ?Form{
+		return null;
 	}
 
 	public function serializeFormData() : array{

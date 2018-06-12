@@ -35,21 +35,8 @@ abstract class CustomFormElement implements \JsonSerializable{
 	}
 
 	/**
-	 * Returns the type of element.
-	 * @return string
-	 */
-	abstract public function getType() : string;
-
-	/**
-	 * Returns the element's label. Usually this is used to explain to the user what a control does.
-	 * @return string
-	 */
-	public function getText() : string{
-		return $this->text;
-	}
-
-	/**
 	 * Returns the value of the component after it's been set by a form response from a player.
+	 *
 	 * @return mixed
 	 */
 	abstract public function getValue();
@@ -59,6 +46,7 @@ abstract class CustomFormElement implements \JsonSerializable{
 	 * whatever errors necessary if the type of value is not as expected.
 	 *
 	 * @param mixed $value
+	 *
 	 * @throws \TypeError
 	 */
 	abstract public function setValue($value) : void;
@@ -78,7 +66,24 @@ abstract class CustomFormElement implements \JsonSerializable{
 	}
 
 	/**
+	 * Returns the type of element.
+	 *
+	 * @return string
+	 */
+	abstract public function getType() : string;
+
+	/**
+	 * Returns the element's label. Usually this is used to explain to the user what a control does.
+	 *
+	 * @return string
+	 */
+	public function getText() : string{
+		return $this->text;
+	}
+
+	/**
 	 * Returns an array of extra data needed to serialize this element to JSON for showing to a player on a form.
+	 *
 	 * @return array
 	 */
 	abstract public function serializeElementData() : array;
