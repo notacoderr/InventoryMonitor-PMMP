@@ -78,7 +78,7 @@ class SelectPlayerForm extends MenuForm{
 			if($syncInventory === null){
 				$this->player->sendMessage($this->plugin->getLanguage()->translate('commands.generic.player.notFound', [$playerName]));
 			}else{
-				$this->player->addWindow($syncInventory);
+				return new ConfirmForm($this->plugin, $this->player, $syncInventory, $this);
 			}
 		}
 		unset(self::$instances[$this->player->getLowerCaseName()]);

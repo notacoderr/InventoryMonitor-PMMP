@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace kim\present\inventorymonitor\listener;
 
+use kim\present\inventorymonitor\form\ConfirmForm;
 use kim\present\inventorymonitor\form\SelectPlayerForm;
 use kim\present\inventorymonitor\inventory\SyncInventory;
 use kim\present\inventorymonitor\InventoryMonitor;
@@ -48,19 +49,23 @@ class PlayerEventListener implements Listener{
 	public function onDataPacketReceiveEvent(DataPacketReceiveEvent $event) : void{
 		$pk = $event->getPacket();
 		if($pk instanceof ModalFormResponsePacket){
-			$formId = (int) $this->owner->getConfig()->getNested("formId.select");
-			if($pk->formId === $formId){
-				$player = $event->getPlayer();
+			$config = $this->owner->getConfig();
+			$player = $event->getPlayer();
+			if($pk->formId === (int) $config->getNested("formId.select")){
 				$form = SelectPlayerForm::getInstance($player);
-				if($form !== null){
-					/** @var SelectPlayerForm $newForm */
-					$newForm = $form->handleResponse($player, json_decode($pk->formData));
-					if($newForm !== null){
-						$newForm->sendForm();
-					}
-				}
-				$event->setCancelled();
+			}elseif($pk->formId === (int) $config->getNested("formId.confirm")){
+				$form = ConfirmForm::getInstance($player);
+			}else{
+				return;
 			}
+			if($form !== null){
+				/** @var SelectPlayerForm $newForm */
+				$newForm = $form->handleResponse($player, json_decode($pk->formData));
+				if($newForm !== null){
+					$newForm->sendForm();
+				}
+			}
+			$event->setCancelled();
 		}
 	}
 }
