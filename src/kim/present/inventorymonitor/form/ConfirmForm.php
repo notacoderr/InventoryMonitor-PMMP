@@ -29,7 +29,7 @@ class ConfirmForm extends ModalForm{
 	private $inventory;
 
 	/**
-	 * @var SelectPlayerForm
+	 * @var null|SelectPlayerForm
 	 */
 	private $prevForm;
 
@@ -44,9 +44,9 @@ class ConfirmForm extends ModalForm{
 	 * @param InventoryMonitor $plugin
 	 * @param Player           $player
 	 * @param SyncInventory    $inventory
-	 * @param SelectPlayerForm $prevForm
+	 * @param null|SelectPlayerForm $prevForm = null
 	 */
-	public function __construct(InventoryMonitor $plugin, Player $player, SyncInventory $inventory, SelectPlayerForm $prevForm){
+	public function __construct(InventoryMonitor $plugin, Player $player, SyncInventory $inventory, ?SelectPlayerForm $prevForm = null){
 		$this->plugin = $plugin;
 		$this->player = $player;
 		$this->inventory = $inventory;
@@ -89,7 +89,7 @@ class ConfirmForm extends ModalForm{
 	public function onSubmit(Player $player) : ?Form{
 		if($this->choice){
 			$this->player->addWindow($this->inventory);
-		}else{
+		}elseif($this->prevForm !== null){
 			$this->prevForm->sendForm();
 		}
 		unset(self::$instances[$this->player->getLowerCaseName()]);
