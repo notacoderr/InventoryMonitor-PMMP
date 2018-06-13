@@ -48,7 +48,7 @@ class PlayerEventListener implements Listener{
 	public function onDataPacketReceiveEvent(DataPacketReceiveEvent $event) : void{
 		$pk = $event->getPacket();
 		if($pk instanceof ModalFormResponsePacket){
-			$formId = (int) $this->owner->getConfig()->getNested("formid.main");
+			$formId = (int) $this->owner->getConfig()->getNested("formId.select");
 			if($pk->formId === $formId){
 				$player = $event->getPlayer();
 				$form = SelectPlayerForm::getInstance($player);

@@ -40,7 +40,7 @@ class SelectPlayerForm extends MenuForm{
 		$this->player = $player;
 
 		$lang = $plugin->getLanguage();
-		parent::__construct($lang->translate("forms.main.title"), $lang->translate("forms.main.text"), []);
+		parent::__construct($lang->translate("forms.select.title"), $lang->translate("forms.select.text"), []);
 	}
 
 	/**
@@ -90,7 +90,7 @@ class SelectPlayerForm extends MenuForm{
 		$this->refreshList();
 
 		$formPacket = new ModalFormRequestPacket();
-		$formPacket->formId = (int) $this->plugin->getConfig()->getNested("formid.main");
+		$formPacket->formId = (int) $this->plugin->getConfig()->getNested("formId.select");
 		$formPacket->formData = json_encode($this->jsonSerialize());
 		$this->player->dataPacket($formPacket);
 	}
@@ -104,14 +104,14 @@ class SelectPlayerForm extends MenuForm{
 		foreach(Server::getInstance()->getOnlinePlayers() as $key => $player){
 			$playerName = $player->getName();
 			$this->playerNames[] = $playerName;
-			$this->options[] = new MenuOption($lang->translate("forms.main.playerName.online", [$playerName]));
+			$this->options[] = new MenuOption($lang->translate("forms.select.playerName.online", [$playerName]));
 		}
 		foreach(scandir(Server::getInstance()->getDataPath() . "players/") as $key => $fileName){
 			if(substr($fileName, -4) == '.dat'){
 				$playerName = substr($fileName, 0, -4);
 				if(!Utils::in_arrayi($playerName, $this->playerNames)){
 					$this->playerNames[] = $playerName;
-					$this->options[] = new MenuOption($lang->translate("forms.main.playerName.offline", [$playerName]));
+					$this->options[] = new MenuOption($lang->translate("forms.select.playerName.offline", [$playerName]));
 				}
 			}
 		}
