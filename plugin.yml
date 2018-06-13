@@ -2,7 +2,7 @@
 name: InventoryMonitor
 main: kim\present\inventorymonitor\InventoryMonitor
 version: 1.2.0
-api: [3.0.0-ALPHA12]
+api: [3.0.0, 3.0.0-ALPHA12]
 author: PresentKim
 website: https://github.com/PresentKim/InventoryMonitor-PMMP
 description: Monitoring player inventory
