@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace kim\present\inventorymonitor;
 
+use kim\present\inventorymonitor\form\ConfirmForm;
+use kim\present\inventorymonitor\form\SelectPlayerForm;
 use kim\present\inventorymonitor\inventory\SyncInventory;
 use kim\present\inventorymonitor\lang\PluginLang;
 use kim\present\inventorymonitor\listener\{
@@ -47,6 +49,8 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 		if(!file_exists($dataFolder)){
 			mkdir($dataFolder, 0777, true);
 		}
+		$this->saveDefaultConfig();
+		$this->reloadConfig();
 		$this->language = new PluginLang($this);
 
 		if($this->command !== null){
@@ -86,10 +90,12 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 				if($syncInventory === null){
 					$sender->sendMessage($this->language->translate('commands.generic.player.notFound', [$args[0]]));
 				}else{
-					$sender->addWindow($syncInventory);
+					$confirmForm = new ConfirmForm($this, $sender, $syncInventory);
+					$confirmForm->sendForm();
 				}
 			}else{
-				return false;
+				$selectForm = new SelectPlayerForm($this, $sender);
+				$selectForm->sendForm();
 			}
 		}else{
 			$sender->sendMessage($this->language->translate('commands.generic.onlyPlayer'));

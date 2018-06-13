@@ -8,7 +8,6 @@ use kim\present\inventorymonitor\inventory\group\{
 	ArmorGroup, CursorGroup, InvGroup, SlotGroup
 };
 use kim\present\inventorymonitor\InventoryMonitor;
-use kim\present\inventorymonitor\task\SendDataPacketTask;
 use pocketmine\block\{
 	Block, BlockFactory
 };
@@ -203,37 +202,7 @@ class SyncInventory extends CustomInventory{
 	public function onOpen(Player $who) : void{
 		BaseInventory::onOpen($who);
 
-		$this->vectors[$key = $who->getLowerCaseName()] = $who->subtract(0, 3, 0)->floor();
-		if($this->vectors[$key]->y < 0){
-			$this->vectors[$key]->y = 0;
-		}
-		$vec = $this->vectors[$key];
-
-		for($i = 0; $i < 2; $i++){
-			$pk = new UpdateBlockPacket();
-			$pk->x = $vec->x + $i;
-			$pk->y = $vec->y;
-			$pk->z = $vec->z;
-			$pk->blockRuntimeId = BlockFactory::toStaticRuntimeId(Block::CHEST);
-			$pk->flags = UpdateBlockPacket::FLAG_NONE;
-			$who->sendDataPacket($pk);
-
-
-			$this->nbt->setInt('x', $vec->x + $i);
-			$this->nbt->setInt('y', $vec->y);
-			$this->nbt->setInt('z', $vec->z);
-			$this->nbt->setInt('pairx', $vec->x + (1 - $i));
-			$this->nbt->setInt('pairz', $vec->z);
-			$player = Server::getInstance()->getPlayerExact($this->playerName);
-			$this->nbt->setString('CustomName', InventoryMonitor::getInstance()->getLanguage()->translate('chest.name', [$player instanceof Player ? $player->getName() : $this->playerName]));
-
-			$pk = new BlockEntityDataPacket();
-			$pk->x = $vec->x + $i;
-			$pk->y = $vec->y;
-			$pk->z = $vec->z;
-			$pk->namedtag = (new NetworkLittleEndianNBTStream())->write($this->nbt);
-			$who->sendDataPacket($pk);
-		}
+		$vec = $this->vectors[$key = $who->getLowerCaseName()];
 
 		$pk = new ContainerOpenPacket();
 		$pk->type = WindowTypes::CONTAINER;
@@ -242,11 +211,12 @@ class SyncInventory extends CustomInventory{
 		$pk->y = $vec->y;
 		$pk->z = $vec->z;
 		$pk->windowId = $who->getWindowId($this);
+		$who->dataPacket($pk);
 
 		$pk2 = new InventoryContentPacket();
 		$pk2->items = $this->getContents(true);
 		$pk2->windowId = $pk->windowId;
-		InventoryMonitor::getInstance()->getScheduler()->scheduleDelayedTask(new SendDataPacketTask($who, $pk, $pk2), 5);
+		$who->dataPacket($pk2);
 	}
 
 	/**
@@ -254,28 +224,7 @@ class SyncInventory extends CustomInventory{
 	 */
 	public function onClose(Player $who) : void{
 		BaseInventory::onClose($who);
-		$key = $who->getLowerCaseName();
-		if(!isset($this->vectors[$key])){
-			return;
-		}
-		for($i = 0; $i < 2; $i++){
-			$block = $who->getLevel()->getBlock($vec = $this->vectors[$key]->add($i, 0, 0));
-
-			$pk = new UpdateBlockPacket();
-			$pk->x = $vec->x;
-			$pk->y = $vec->y;
-			$pk->z = $vec->z;
-			$pk->blockRuntimeId = BlockFactory::toStaticRuntimeId($block->getId(), $block->getDamage());
-			$pk->flags = UpdateBlockPacket::FLAG_NONE;
-			$who->sendDataPacket($pk);
-
-			$tile = $who->getLevel()->getTile($vec);
-			if($tile instanceof Spawnable){
-				$who->sendDataPacket($tile->createSpawnPacket());
-			}
-		}
-		unset($this->vectors[$key]);
-
+		$this->restoreFakeChestBlock($who);
 		if(empty($this->viewers)){
 			$this->delete();
 		}
@@ -323,6 +272,68 @@ class SyncInventory extends CustomInventory{
 			$namedTag->setTag($inventoryTag);
 			$server->saveOfflinePlayerData($this->playerName, $namedTag);
 		}
+	}
+	/**
+	 * @param Player $who
+	 */
+	public function sendFakeChestBlock(Player $who) : void{
+		$this->vectors[$key = $who->getLowerCaseName()] = $who->subtract(0, 3, 0)->floor();
+		if($this->vectors[$key]->y < 0){
+			$this->vectors[$key]->y = 0;
+		}
+		$vec = $this->vectors[$key];
+
+		for($i = 0; $i < 2; $i++){
+			$pk = new UpdateBlockPacket();
+			$pk->x = $vec->x + $i;
+			$pk->y = $vec->y;
+			$pk->z = $vec->z;
+			$pk->blockRuntimeId = BlockFactory::toStaticRuntimeId(Block::CHEST);
+			$pk->flags = UpdateBlockPacket::FLAG_NONE;
+			$who->sendDataPacket($pk);
+
+
+			$this->nbt->setInt('x', $vec->x + $i);
+			$this->nbt->setInt('y', $vec->y);
+			$this->nbt->setInt('z', $vec->z);
+			$this->nbt->setInt('pairx', $vec->x + (1 - $i));
+			$this->nbt->setInt('pairz', $vec->z);
+			$player = Server::getInstance()->getPlayerExact($this->playerName);
+			$this->nbt->setString('CustomName', InventoryMonitor::getInstance()->getLanguage()->translate('chest.name', [$player instanceof Player ? $player->getName() : $this->playerName]));
+
+			$pk = new BlockEntityDataPacket();
+			$pk->x = $vec->x + $i;
+			$pk->y = $vec->y;
+			$pk->z = $vec->z;
+			$pk->namedtag = (new NetworkLittleEndianNBTStream())->write($this->nbt);
+			$who->sendDataPacket($pk);
+		}
+	}
+
+	/**
+	 * @param Player $who
+	 */
+	public function restoreFakeChestBlock(Player $who) : void{
+		if(!isset($this->vectors[$key = $who->getLowerCaseName()])){
+			return;
+		}
+		for($i = 0; $i < 2; $i++){
+			$block = $who->getLevel()->getBlock($vec = $this->vectors[$key]->add($i, 0, 0));
+
+			$pk = new UpdateBlockPacket();
+			$pk->x = $vec->x;
+			$pk->y = $vec->y;
+			$pk->z = $vec->z;
+			$pk->blockRuntimeId = BlockFactory::toStaticRuntimeId($block->getId(), $block->getDamage());
+			$pk->flags = UpdateBlockPacket::FLAG_NONE;
+			$who->sendDataPacket($pk);
+
+			$tile = $who->getLevel()->getTile($vec);
+			if($tile instanceof Spawnable){
+				$who->sendDataPacket($tile->createSpawnPacket());
+			}
+		}
+		unset($this->vectors[$key]);
 	}
 
 	/**
