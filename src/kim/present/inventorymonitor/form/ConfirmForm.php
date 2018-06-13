@@ -99,6 +99,7 @@ class ConfirmForm extends ModalForm{
 
 	public function sendForm(){
 		self::$instances[$this->player->getLowerCaseName()] = $this;
+		$this->inventory->sendFakeChestBlock($this->player);
 
 		$formPacket = new ModalFormRequestPacket();
 		$formPacket->formId = (int) $this->plugin->getConfig()->getNested("formId.confirm");

@@ -203,7 +203,6 @@ class SyncInventory extends CustomInventory{
 	public function onOpen(Player $who) : void{
 		BaseInventory::onOpen($who);
 
-		$this->sendFakeChestBlock($who);
 		$vec = $this->vectors[$key = $who->getLowerCaseName()];
 
 		$pk = new ContainerOpenPacket();
