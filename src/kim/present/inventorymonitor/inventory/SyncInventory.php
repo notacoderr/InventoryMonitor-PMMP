@@ -8,7 +8,6 @@ use kim\present\inventorymonitor\inventory\group\{
 	ArmorGroup, CursorGroup, InvGroup, SlotGroup
 };
 use kim\present\inventorymonitor\InventoryMonitor;
-use kim\present\inventorymonitor\task\SendDataPacketTask;
 use pocketmine\block\{
 	Block, BlockFactory
 };
@@ -212,11 +211,12 @@ class SyncInventory extends CustomInventory{
 		$pk->y = $vec->y;
 		$pk->z = $vec->z;
 		$pk->windowId = $who->getWindowId($this);
+		$who->dataPacket($pk);
 
 		$pk2 = new InventoryContentPacket();
 		$pk2->items = $this->getContents(true);
 		$pk2->windowId = $pk->windowId;
-		InventoryMonitor::getInstance()->getScheduler()->scheduleDelayedTask(new SendDataPacketTask($who, $pk, $pk2), 5);
+		$who->dataPacket($pk2);
 	}
 
 	/**
