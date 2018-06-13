@@ -38,14 +38,14 @@ class SyncInventory extends CustomInventory{
 	protected static $instances = [];
 
 	/**
-	 * @var Vector3[]
-	 */
-	protected static $vectors = [];
-
-	/**
 	 * @var CompoundTag
 	 */
 	protected $nbt;
+
+	/**
+	 * @var Vector3[]
+	 */
+	protected $vectors = [];
 
 	/**
 	 * @var string
@@ -203,9 +203,22 @@ class SyncInventory extends CustomInventory{
 	public function onOpen(Player $who) : void{
 		BaseInventory::onOpen($who);
 
-		self::sendFakeChestBlock($who);
-		$vec = self::$vectors[$key = $who->getLowerCaseName()];
+		$this->vectors[$key = $who->getLowerCaseName()] = $who->subtract(0, 3, 0)->floor();
+		if($this->vectors[$key]->y < 0){
+			$this->vectors[$key]->y = 0;
+		}
+		$vec = $this->vectors[$key];
+
 		for($i = 0; $i < 2; $i++){
+			$pk = new UpdateBlockPacket();
+			$pk->x = $vec->x + $i;
+			$pk->y = $vec->y;
+			$pk->z = $vec->z;
+			$pk->blockRuntimeId = BlockFactory::toStaticRuntimeId(Block::CHEST);
+			$pk->flags = UpdateBlockPacket::FLAG_NONE;
+			$who->sendDataPacket($pk);
+
+
 			$this->nbt->setInt('x', $vec->x + $i);
 			$this->nbt->setInt('y', $vec->y);
 			$this->nbt->setInt('z', $vec->z);
@@ -241,7 +254,28 @@ class SyncInventory extends CustomInventory{
 	 */
 	public function onClose(Player $who) : void{
 		BaseInventory::onClose($who);
-		self::restoreFakeChestBlock($who);
+		$key = $who->getLowerCaseName();
+		if(!isset($this->vectors[$key])){
+			return;
+		}
+		for($i = 0; $i < 2; $i++){
+			$block = $who->getLevel()->getBlock($vec = $this->vectors[$key]->add($i, 0, 0));
+
+			$pk = new UpdateBlockPacket();
+			$pk->x = $vec->x;
+			$pk->y = $vec->y;
+			$pk->z = $vec->z;
+			$pk->blockRuntimeId = BlockFactory::toStaticRuntimeId($block->getId(), $block->getDamage());
+			$pk->flags = UpdateBlockPacket::FLAG_NONE;
+			$who->sendDataPacket($pk);
+
+			$tile = $who->getLevel()->getTile($vec);
+			if($tile instanceof Spawnable){
+				$who->sendDataPacket($tile->createSpawnPacket());
+			}
+		}
+		unset($this->vectors[$key]);
+
 		if(empty($this->viewers)){
 			$this->delete();
 		}
@@ -289,54 +323,6 @@ class SyncInventory extends CustomInventory{
 			$namedTag->setTag($inventoryTag);
 			$server->saveOfflinePlayerData($this->playerName, $namedTag);
 		}
-	}
-
-	/**
-	 * @param Player $who
-	 */
-	public static function sendFakeChestBlock(Player $who){
-		self::$vectors[$key = $who->getLowerCaseName()] = $who->subtract(0, 3, 0)->floor();
-		if(self::$vectors[$key]->y < 0){
-			self::$vectors[$key]->y = 0;
-		}
-		$vec = self::$vectors[$key];
-
-		for($i = 0; $i < 2; $i++){
-			$pk = new UpdateBlockPacket();
-			$pk->x = $vec->x + $i;
-			$pk->y = $vec->y;
-			$pk->z = $vec->z;
-			$pk->blockRuntimeId = BlockFactory::toStaticRuntimeId(Block::CHEST);
-			$pk->flags = UpdateBlockPacket::FLAG_NONE;
-			$who->sendDataPacket($pk);
-		}
-	}
-
-	/**
-	 * @param Player $who
-	 */
-	public static function restoreFakeChestBlock(Player $who){
-		$key = $who->getLowerCaseName();
-		if(!isset(self::$vectors[$key])){
-			return;
-		}
-		for($i = 0; $i < 2; $i++){
-			$block = $who->getLevel()->getBlock($vec = self::$vectors[$key]->add($i, 0, 0));
-
-			$pk = new UpdateBlockPacket();
-			$pk->x = $vec->x;
-			$pk->y = $vec->y;
-			$pk->z = $vec->z;
-			$pk->blockRuntimeId = BlockFactory::toStaticRuntimeId($block->getId(), $block->getDamage());
-			$pk->flags = UpdateBlockPacket::FLAG_NONE;
-			$who->sendDataPacket($pk);
-
-			$tile = $who->getLevel()->getTile($vec);
-			if($tile instanceof Spawnable){
-				$who->sendDataPacket($tile->createSpawnPacket());
-			}
-		}
-		unset(self::$vectors[$key]);
 	}
 
 	/**
