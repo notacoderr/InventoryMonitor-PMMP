@@ -6,4 +6,4 @@ formid:
   # Form id for InventoryMonitor
   # It was determined by the InventoryMonitor repo ID (According to https://api.github.com/repos/PresentKim/InventoryMonitor-PMMP)
   select: 1200960900 #120096090 + 0
-  failure: 1200960901 #120096090 + 1
+  confirm: 1200960901 #120096090 + 1
