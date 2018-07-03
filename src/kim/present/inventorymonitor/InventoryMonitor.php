@@ -18,19 +18,13 @@ use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 
 class InventoryMonitor extends PluginBase implements CommandExecutor{
-	/**
-	 * @var InventoryMonitor
-	 */
+	/** @var InventoryMonitor */
 	private static $instance;
 
-	/**
-	 * @var PluginCommand
-	 */
+	/** @var PluginCommand */
 	private $command;
 
-	/**
-	 * @var PluginLang
-	 */
+	/** @var PluginLang */
 	private $language;
 
 	/**

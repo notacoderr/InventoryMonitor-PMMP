@@ -11,9 +11,7 @@ abstract class SlotGroup{
 	public const START = -1;
 	public const END = -1;
 
-	/**
-	 * @var SyncInventory $syncInventory
-	 */
+	/** @var SyncInventory $syncInventory */
 	protected $syncInventory;
 
 	/**
