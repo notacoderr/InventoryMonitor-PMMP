@@ -19,9 +19,7 @@ use pocketmine\inventory\transaction\action\SlotChangeAction;
 use pocketmine\Player;
 
 class InventoryEventListener implements Listener{
-	/**
-	 * @var InventoryMonitor
-	 */
+	/** @var InventoryMonitor */
 	private $owner;
 
 	/**

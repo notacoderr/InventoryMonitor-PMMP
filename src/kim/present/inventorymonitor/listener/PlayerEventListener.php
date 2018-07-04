@@ -14,9 +14,7 @@ use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\ModalFormResponsePacket;
 
 class PlayerEventListener implements Listener{
-	/**
-	 * @var InventoryMonitor
-	 */
+	/** @var InventoryMonitor */
 	private $owner;
 
 	/**

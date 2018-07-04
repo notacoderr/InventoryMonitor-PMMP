@@ -31,29 +31,19 @@ use pocketmine\Server;
 use pocketmine\tile\Spawnable;
 
 class SyncInventory extends CustomInventory{
-	/**
-	 * @var SyncInventory[]
-	 */
+	/** @var SyncInventory[] */
 	protected static $instances = [];
 
-	/**
-	 * @var CompoundTag
-	 */
+	/** @var CompoundTag */
 	protected $nbt;
 
-	/**
-	 * @var Vector3[]
-	 */
+	/** @var Vector3[] */
 	protected $vectors = [];
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	protected $playerName;
 
-	/**
-	 * @var SlotGroup[]
-	 */
+	/** @var SlotGroup[] */
 	protected $groups = [];
 
 	/**
@@ -273,6 +263,7 @@ class SyncInventory extends CustomInventory{
 			$server->saveOfflinePlayerData($this->playerName, $namedTag);
 		}
 	}
+
 	/**
 	 * @param Player $who
 	 */

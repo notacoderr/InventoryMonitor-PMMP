@@ -30,13 +30,9 @@ class FormIcon implements \JsonSerializable{
 	public const IMAGE_TYPE_URL = "url";
 	public const IMAGE_TYPE_PATH = "path";
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $type;
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $data;
 
 	/**

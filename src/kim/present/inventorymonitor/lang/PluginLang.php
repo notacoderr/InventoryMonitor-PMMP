@@ -9,19 +9,13 @@ use kim\present\inventorymonitor\InventoryMonitor;
 class PluginLang{
 	public const FALLBACK_LANGUAGE = "eng";
 
-	/**
-	 * @var InventoryMonitor
-	 */
+	/** @var InventoryMonitor */
 	protected $plugin;
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	protected $lang = [];
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	protected $fallbackLang = [];
 
 	/**

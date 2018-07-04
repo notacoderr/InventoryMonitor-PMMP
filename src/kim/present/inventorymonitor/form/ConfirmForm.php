@@ -13,37 +13,27 @@ use pocketmine\Server;
 class ConfirmForm extends ModalForm{
 	private static $instances = [];
 
-	/**
-	 * @var InventoryMonitor
-	 */
+	/** @var InventoryMonitor */
 	private $plugin;
 
-	/**
-	 * @var Player
-	 */
+	/** @var Player */
 	private $player;
 
-	/**
-	 * @var SyncInventory
-	 */
+	/** @var SyncInventory */
 	private $inventory;
 
-	/**
-	 * @var null|SelectPlayerForm
-	 */
+	/** @var null|SelectPlayerForm */
 	private $prevForm;
 
-	/**
-	 * @var bool
-	 */
+	/** @var bool */
 	private $isOnline;
 
 	/**
 	 * ConfirmForm constructor.
 	 *
-	 * @param InventoryMonitor $plugin
-	 * @param Player           $player
-	 * @param SyncInventory    $inventory
+	 * @param InventoryMonitor      $plugin
+	 * @param Player                $player
+	 * @param SyncInventory         $inventory
 	 * @param null|SelectPlayerForm $prevForm = null
 	 */
 	public function __construct(InventoryMonitor $plugin, Player $player, SyncInventory $inventory, ?SelectPlayerForm $prevForm = null){

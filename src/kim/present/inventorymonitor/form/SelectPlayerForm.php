@@ -14,19 +14,13 @@ use pocketmine\Server;
 class SelectPlayerForm extends MenuForm{
 	private static $instances = [];
 
-	/**
-	 * @var InventoryMonitor
-	 */
+	/** @var InventoryMonitor */
 	private $plugin;
 
-	/**
-	 * @var Player
-	 */
+	/** @var Player */
 	private $player;
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	private $playerNames;
 
 	/**
