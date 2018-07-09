@@ -37,14 +37,14 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 	/**
 	 * Called when the plugin is loaded, before calling onEnable()
 	 */
-	protected function onLoad() : void{
+	public function onLoad() : void{
 		self::$instance = $this;
 	}
 
 	/**
 	 * Called when the plugin is enabled
 	 */
-	protected function onEnable() : void{
+	public function onEnable() : void{
 		$dataFolder = $this->getDataFolder();
 		if(!file_exists($dataFolder)){
 			mkdir($dataFolder, 0777, true);
@@ -73,7 +73,7 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 	 * Called when the plugin is disabled
 	 * Use this to free open things and finish actions
 	 */
-	protected function onDisable() : void{
+	public function onDisable() : void{
 		foreach(SyncInventory::getAll() as $playerName => $syncInventory){
 			$syncInventory->delete();
 		}
