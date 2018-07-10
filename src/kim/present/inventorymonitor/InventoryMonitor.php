@@ -51,18 +51,22 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 		}
 		$this->saveDefaultConfig();
 		$this->reloadConfig();
-		$this->language = new PluginLang($this);
+		$this->language = new PluginLang($this, PluginLang::FALLBACK_LANGUAGE);
 
 		if($this->command !== null){
 			$this->getServer()->getCommandMap()->unregister($this->command);
 		}
-		$this->command = new PluginCommand($this->language->translate('commands.inventorymonitor'), $this);
+		$this->command = new PluginCommand($this->language->translateString('commands.inventorymonitor'), $this);
 		$this->command->setPermission('inventorymonitor.cmd');
-		$this->command->setDescription($this->language->translate('commands.inventorymonitor.description'));
-		$this->command->setUsage($this->language->translate('commands.inventorymonitor.usage'));
-		if(is_array($aliases = $this->language->getArray('commands.inventorymonitor.aliases'))){
-			$this->command->setAliases($aliases);
-		}
+		$this->command->setDescription($this->language->translateString('commands.inventorymonitor.description'));
+		$this->command->setUsage($this->language->translateString('commands.inventorymonitor.usage'));
+		/*
+		 * TODO: Support aliases of main command
+		 *
+		 * if(is_array($aliases = $this->language->getArray('commands.inventorymonitor.aliases'))){
+		 * 	$this->command->setAliases($aliases);
+		 * }
+		 */
 		$this->getServer()->getCommandMap()->register('inventorymonitor', $this->command);
 
 		$this->getServer()->getPluginManager()->registerEvents(new InventoryEventListener($this), $this);
@@ -92,7 +96,7 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 			if(isset($args[0])){
 				$syncInventory = SyncInventory::load(strtolower($args[0]));
 				if($syncInventory === null){
-					$sender->sendMessage($this->language->translate('commands.generic.player.notFound', [$args[0]]));
+					$sender->sendMessage($this->language->translateString('commands.generic.player.notFound', [$args[0]]));
 				}else{
 					$confirmForm = new ConfirmForm($this, $sender, $syncInventory);
 					$confirmForm->sendForm();
@@ -102,7 +106,7 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 				$selectForm->sendForm();
 			}
 		}else{
-			$sender->sendMessage($this->language->translate('commands.generic.onlyPlayer'));
+			$sender->sendMessage($this->language->translateString('commands.generic.onlyPlayer'));
 		}
 		return true;
 	}
@@ -121,17 +125,5 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 	 */
 	public function getLanguage() : PluginLang{
 		return $this->language;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSourceFolder() : string{
-		$pharPath = \Phar::running();
-		if(empty($pharPath)){
-			return dirname(__FILE__, 5) . DIRECTORY_SEPARATOR;
-		}else{
-			return $pharPath . DIRECTORY_SEPARATOR;
-		}
 	}
 }
