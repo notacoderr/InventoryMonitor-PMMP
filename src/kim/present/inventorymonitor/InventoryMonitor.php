@@ -21,11 +21,11 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 	/** @var InventoryMonitor */
 	private static $instance;
 
-	/** @var PluginCommand */
-	private $command;
-
 	/** @var PluginLang */
 	private $language;
+
+	/** @var PluginCommand */
+	private $command;
 
 	/**
 	 * @return InventoryMonitor
