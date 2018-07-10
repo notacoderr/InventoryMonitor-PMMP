@@ -45,10 +45,11 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 	 * Called when the plugin is enabled
 	 */
 	public function onEnable() : void{
-		$dataFolder = $this->getDataFolder();
-		if(!file_exists($dataFolder)){
-			mkdir($dataFolder, 0777, true);
-		}
+		//Save default resources
+		$this->saveResource("lang/eng/lang.ini", false);
+		$this->saveResource("lang/kor/lang.ini", false);
+		$this->saveResource("lang/language.list", false);
+
 		$this->saveDefaultConfig();
 		$this->reloadConfig();
 		$this->language = new PluginLang($this, PluginLang::FALLBACK_LANGUAGE);
