@@ -50,10 +50,15 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 		$this->saveResource("lang/kor/lang.ini", false);
 		$this->saveResource("lang/language.list", false);
 
+		//Load config file
 		$this->saveDefaultConfig();
 		$this->reloadConfig();
-		$this->language = new PluginLang($this, PluginLang::FALLBACK_LANGUAGE);
 
+		//Load language file
+		$this->language = new PluginLang($this, PluginLang::FALLBACK_LANGUAGE);
+		$this->getLogger()->info($this->language->translateString("language.selected", [$this->language->getName(), $this->language->getLang()]));
+
+		//Register main command
 		if($this->command !== null){
 			$this->getServer()->getCommandMap()->unregister($this->command);
 		}
@@ -70,6 +75,7 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 		 */
 		$this->getServer()->getCommandMap()->register('inventorymonitor', $this->command);
 
+		//Register event listeners
 		$this->getServer()->getPluginManager()->registerEvents(new InventoryEventListener($this), $this);
 		$this->getServer()->getPluginManager()->registerEvents(new PlayerEventListener($this), $this);
 	}
