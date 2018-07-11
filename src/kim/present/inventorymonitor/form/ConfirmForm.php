@@ -45,7 +45,7 @@ class ConfirmForm extends ModalForm{
 		$this->isOnline = Server::getInstance()->getPlayerExact($targetName) instanceof Player;
 
 		$lang = $plugin->getLanguage();
-		parent::__construct($lang->translate("forms.confirm.title"), $lang->translate("forms.confirm.text." . ($this->isOnline ? "online" : "offline"), [$targetName]));
+		parent::__construct($lang->translateString("forms.confirm.title"), $lang->translateString("forms.confirm.text." . ($this->isOnline ? "online" : "offline"), [$targetName]));
 	}
 
 	/**
@@ -92,7 +92,7 @@ class ConfirmForm extends ModalForm{
 		$this->inventory->sendFakeChestBlock($this->player);
 
 		$formPacket = new ModalFormRequestPacket();
-		$formPacket->formId = (int) $this->plugin->getConfig()->getNested("formId.confirm");
+		$formPacket->formId = (int) $this->plugin->getConfig()->getNested("settings.formId.confirm");
 		$formPacket->formData = json_encode($this->jsonSerialize());
 		$this->player->dataPacket($formPacket);
 	}

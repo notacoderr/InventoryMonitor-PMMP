@@ -49,9 +49,9 @@ class PlayerEventListener implements Listener{
 		if($pk instanceof ModalFormResponsePacket){
 			$config = $this->owner->getConfig();
 			$player = $event->getPlayer();
-			if($pk->formId === (int) $config->getNested("formId.select")){
+			if($pk->formId === (int) $config->getNested("settings.formId.select")){
 				$form = SelectPlayerForm::getInstance($player);
-			}elseif($pk->formId === (int) $config->getNested("formId.confirm")){
+			}elseif($pk->formId === (int) $config->getNested("settings.formId.confirm")){
 				$form = ConfirmForm::getInstance($player);
 			}else{
 				return;

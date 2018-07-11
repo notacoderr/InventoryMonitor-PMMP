@@ -21,11 +21,11 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 	/** @var InventoryMonitor */
 	private static $instance;
 
-	/** @var PluginCommand */
-	private $command;
-
 	/** @var PluginLang */
 	private $language;
+
+	/** @var PluginCommand */
+	private $command;
 
 	/**
 	 * @return InventoryMonitor
@@ -45,26 +45,29 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 	 * Called when the plugin is enabled
 	 */
 	public function onEnable() : void{
-		$dataFolder = $this->getDataFolder();
-		if(!file_exists($dataFolder)){
-			mkdir($dataFolder, 0777, true);
-		}
+		//Save default resources
+		$this->saveResource("lang/eng/lang.ini", false);
+		$this->saveResource("lang/kor/lang.ini", false);
+		$this->saveResource("lang/language.list", false);
+
+		//Load config file
 		$this->saveDefaultConfig();
 		$this->reloadConfig();
-		$this->language = new PluginLang($this);
+		$config = $this->getConfig();
 
-		if($this->command !== null){
-			$this->getServer()->getCommandMap()->unregister($this->command);
-		}
-		$this->command = new PluginCommand($this->language->translate('commands.inventorymonitor'), $this);
-		$this->command->setPermission('inventorymonitor.cmd');
-		$this->command->setDescription($this->language->translate('commands.inventorymonitor.description'));
-		$this->command->setUsage($this->language->translate('commands.inventorymonitor.usage'));
-		if(is_array($aliases = $this->language->getArray('commands.inventorymonitor.aliases'))){
-			$this->command->setAliases($aliases);
-		}
-		$this->getServer()->getCommandMap()->register('inventorymonitor', $this->command);
+		//Load language file
+		$this->language = new PluginLang($this, $config->getNested("settings.language"));
+		$this->getLogger()->info($this->language->translateString("language.selected", [$this->language->getName(), $this->language->getLang()]));
 
+		//Register main command
+		$this->command = new PluginCommand($config->getNested("command.name"), $this);
+		$this->command->setPermission("inventorymonitor.cmd");
+		$this->command->setAliases($config->getNested("command.aliases"));
+		$this->command->setUsage($this->language->translateString("commands.inventorymonitor.usage"));
+		$this->command->setDescription($this->language->translateString("commands.inventorymonitor.description"));
+		$this->getServer()->getCommandMap()->register($this->getName(), $this->command);
+
+		//Register event listeners
 		$this->getServer()->getPluginManager()->registerEvents(new InventoryEventListener($this), $this);
 		$this->getServer()->getPluginManager()->registerEvents(new PlayerEventListener($this), $this);
 	}
@@ -92,7 +95,7 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 			if(isset($args[0])){
 				$syncInventory = SyncInventory::load(strtolower($args[0]));
 				if($syncInventory === null){
-					$sender->sendMessage($this->language->translate('commands.generic.player.notFound', [$args[0]]));
+					$sender->sendMessage($this->language->translateString("commands.generic.player.notFound", [$args[0]]));
 				}else{
 					$confirmForm = new ConfirmForm($this, $sender, $syncInventory);
 					$confirmForm->sendForm();
@@ -102,17 +105,37 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 				$selectForm->sendForm();
 			}
 		}else{
-			$sender->sendMessage($this->language->translate('commands.generic.onlyPlayer'));
+			$sender->sendMessage($this->language->translateString("commands.generic.onlyPlayer"));
 		}
 		return true;
 	}
 
 	/**
-	 * @param string $name = ''
+	 * @Override for multilingual support of the config file
+	 *
+	 * @return bool
+	 */
+	public function saveDefaultConfig() : bool{
+		$resource = $this->getResource("lang/{$this->getServer()->getLanguage()->getLang()}/config.yml");
+		if($resource === null){
+			$resource = $this->getResource("lang/" . PluginLang::FALLBACK_LANGUAGE . "/config.yml");
+		}
+
+		if(!file_exists($configFile = $this->getDataFolder() . "config.yml")){
+			$ret = stream_copy_to_stream($resource, $fp = fopen($configFile, "wb")) > 0;
+			fclose($fp);
+			fclose($resource);
+			return $ret;
+		}
+		return false;
+	}
+
+	/**
+	 * @param string $name = ""
 	 *
 	 * @return PluginCommand
 	 */
-	public function getCommand(string $name = '') : PluginCommand{
+	public function getCommand(string $name = "") : PluginCommand{
 		return $this->command;
 	}
 
@@ -121,17 +144,5 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 	 */
 	public function getLanguage() : PluginLang{
 		return $this->language;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getSourceFolder() : string{
-		$pharPath = \Phar::running();
-		if(empty($pharPath)){
-			return dirname(__FILE__, 5) . DIRECTORY_SEPARATOR;
-		}else{
-			return $pharPath . DIRECTORY_SEPARATOR;
-		}
 	}
 }

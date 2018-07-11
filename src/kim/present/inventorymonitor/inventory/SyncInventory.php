@@ -60,7 +60,7 @@ class SyncInventory extends CustomInventory{
 		$this->groups[] = new CursorGroup($this);
 
 		$borderItem = Item::get(Block::SKULL_BLOCK);
-		$borderItem->setCustomName('');
+		$borderItem->setCustomName("");
 		for($i = 0; $i < 54; ++$i){
 			if(!$this->isValidSlot($i)){
 				$this->setItem($i, clone $borderItem);
@@ -68,8 +68,8 @@ class SyncInventory extends CustomInventory{
 		}
 
 		$this->playerName = strtolower($playerName);
-		$this->nbt = new CompoundTag('', [
-			new StringTag('id', 'Chest'),
+		$this->nbt = new CompoundTag("", [
+			new StringTag("id", "Chest"),
 		]);
 		self::$instances[$this->playerName] = $this;
 	}
@@ -284,13 +284,13 @@ class SyncInventory extends CustomInventory{
 			$who->sendDataPacket($pk);
 
 
-			$this->nbt->setInt('x', $vec->x + $i);
-			$this->nbt->setInt('y', $vec->y);
-			$this->nbt->setInt('z', $vec->z);
-			$this->nbt->setInt('pairx', $vec->x + (1 - $i));
-			$this->nbt->setInt('pairz', $vec->z);
+			$this->nbt->setInt("x", $vec->x + $i);
+			$this->nbt->setInt("y", $vec->y);
+			$this->nbt->setInt("z", $vec->z);
+			$this->nbt->setInt("pairx", $vec->x + (1 - $i));
+			$this->nbt->setInt("pairz", $vec->z);
 			$player = Server::getInstance()->getPlayerExact($this->playerName);
-			$this->nbt->setString('CustomName', InventoryMonitor::getInstance()->getLanguage()->translate('chest.name', [$player instanceof Player ? $player->getName() : $this->playerName]));
+			$this->nbt->setString("CustomName", InventoryMonitor::getInstance()->getLanguage()->translateString("chest.name", [$player instanceof Player ? $player->getName() : $this->playerName]));
 
 			$pk = new BlockEntityDataPacket();
 			$pk->x = $vec->x + $i;
