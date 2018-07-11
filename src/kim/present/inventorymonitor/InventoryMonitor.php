@@ -33,6 +33,7 @@ use kim\present\inventorymonitor\lang\PluginLang;
 use kim\present\inventorymonitor\listener\{
 	InventoryEventListener, PlayerEventListener
 };
+use kim\present\inventorymonitor\task\CheckUpdateAsyncTask;
 use pocketmine\command\{
 	Command, CommandExecutor, CommandSender, PluginCommand
 };
@@ -76,6 +77,11 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 		$this->saveDefaultConfig();
 		$this->reloadConfig();
 		$config = $this->getConfig();
+
+		//Check latest version
+		if($config->getNested("settings.update-check", false)){
+			$this->getServer()->getAsyncPool()->submitTask(new CheckUpdateAsyncTask());
+		}
 
 		//Load language file
 		$this->language = new PluginLang($this, $config->getNested("settings.language"));
