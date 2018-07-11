@@ -70,7 +70,7 @@ class SelectPlayerForm extends MenuForm{
 			$playerName = $this->playerNames[$this->selectedOption];
 			$syncInventory = SyncInventory::load($playerName);
 			if($syncInventory === null){
-				$this->player->sendMessage($this->plugin->getLanguage()->translateString('commands.generic.player.notFound', [$playerName]));
+				$this->player->sendMessage($this->plugin->getLanguage()->translateString("commands.generic.player.notFound", [$playerName]));
 			}else{
 				return new ConfirmForm($this->plugin, $this->player, $syncInventory, $this);
 			}
@@ -101,7 +101,7 @@ class SelectPlayerForm extends MenuForm{
 			$this->options[] = new MenuOption($lang->translateString("forms.select.playerName.online", [$playerName]));
 		}
 		foreach(scandir(Server::getInstance()->getDataPath() . "players/") as $key => $fileName){
-			if(substr($fileName, -4) == '.dat'){
+			if(substr($fileName, -4) == ".dat"){
 				$playerName = substr($fileName, 0, -4);
 				if(!Utils::in_arrayi($playerName, $this->playerNames)){
 					$this->playerNames[] = $playerName;

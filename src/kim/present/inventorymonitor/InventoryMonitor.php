@@ -95,7 +95,7 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 			if(isset($args[0])){
 				$syncInventory = SyncInventory::load(strtolower($args[0]));
 				if($syncInventory === null){
-					$sender->sendMessage($this->language->translateString('commands.generic.player.notFound', [$args[0]]));
+					$sender->sendMessage($this->language->translateString("commands.generic.player.notFound", [$args[0]]));
 				}else{
 					$confirmForm = new ConfirmForm($this, $sender, $syncInventory);
 					$confirmForm->sendForm();
@@ -105,7 +105,7 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 				$selectForm->sendForm();
 			}
 		}else{
-			$sender->sendMessage($this->language->translateString('commands.generic.onlyPlayer'));
+			$sender->sendMessage($this->language->translateString("commands.generic.onlyPlayer"));
 		}
 		return true;
 	}
@@ -131,11 +131,11 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 	}
 
 	/**
-	 * @param string $name = ''
+	 * @param string $name = ""
 	 *
 	 * @return PluginCommand
 	 */
-	public function getCommand(string $name = '') : PluginCommand{
+	public function getCommand(string $name = "") : PluginCommand{
 		return $this->command;
 	}
 
