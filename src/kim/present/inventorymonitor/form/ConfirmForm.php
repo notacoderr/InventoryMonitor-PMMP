@@ -92,7 +92,7 @@ class ConfirmForm extends ModalForm{
 		$this->inventory->sendFakeChestBlock($this->player);
 
 		$formPacket = new ModalFormRequestPacket();
-		$formPacket->formId = (int) $this->plugin->getConfig()->getNested("formId.confirm");
+		$formPacket->formId = (int) $this->plugin->getConfig()->getNested("settings.formId.confirm");
 		$formPacket->formData = json_encode($this->jsonSerialize());
 		$this->player->dataPacket($formPacket);
 	}

@@ -53,27 +53,19 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 		//Load config file
 		$this->saveDefaultConfig();
 		$this->reloadConfig();
+		$config = $this->getConfig();
 
 		//Load language file
-		$this->language = new PluginLang($this, PluginLang::FALLBACK_LANGUAGE);
+		$this->language = new PluginLang($this, $config->getNested("settings.language"));
 		$this->getLogger()->info($this->language->translateString("language.selected", [$this->language->getName(), $this->language->getLang()]));
 
 		//Register main command
-		if($this->command !== null){
-			$this->getServer()->getCommandMap()->unregister($this->command);
-		}
-		$this->command = new PluginCommand($this->language->translateString('commands.inventorymonitor'), $this);
-		$this->command->setPermission('inventorymonitor.cmd');
-		$this->command->setDescription($this->language->translateString('commands.inventorymonitor.description'));
-		$this->command->setUsage($this->language->translateString('commands.inventorymonitor.usage'));
-		/*
-		 * TODO: Support aliases of main command
-		 *
-		 * if(is_array($aliases = $this->language->getArray('commands.inventorymonitor.aliases'))){
-		 * 	$this->command->setAliases($aliases);
-		 * }
-		 */
-		$this->getServer()->getCommandMap()->register('inventorymonitor', $this->command);
+		$this->command = new PluginCommand($config->getNested("command.name"), $this);
+		$this->command->setPermission("inventorymonitor.cmd");
+		$this->command->setAliases($config->getNested("command.aliases"));
+		$this->command->setUsage($this->language->translateString("commands.inventorymonitor.usage"));
+		$this->command->setDescription($this->language->translateString("commands.inventorymonitor.description"));
+		$this->getServer()->getCommandMap()->register($this->getName(), $this->command);
 
 		//Register event listeners
 		$this->getServer()->getPluginManager()->registerEvents(new InventoryEventListener($this), $this);
@@ -116,6 +108,26 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 			$sender->sendMessage($this->language->translateString('commands.generic.onlyPlayer'));
 		}
 		return true;
+	}
+
+	/**
+	 * @Override for multilingual support of the config file
+	 *
+	 * @return bool
+	 */
+	public function saveDefaultConfig() : bool{
+		$resource = $this->getResource("lang/{$this->getServer()->getLanguage()->getLang()}/config.yml");
+		if($resource === null){
+			$resource = $this->getResource("lang/" . PluginLang::FALLBACK_LANGUAGE . "/config.yml");
+		}
+
+		if(!file_exists($configFile = $this->getDataFolder() . "config.yml")){
+			$ret = stream_copy_to_stream($resource, $fp = fopen($configFile, "wb")) > 0;
+			fclose($fp);
+			fclose($resource);
+			return $ret;
+		}
+		return false;
 	}
 
 	/**
