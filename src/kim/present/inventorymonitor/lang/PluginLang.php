@@ -26,21 +26,21 @@ declare(strict_types=1);
 
 namespace kim\present\inventorymonitor\lang;
 
-use kim\present\inventorymonitor\InventoryMonitor;
 use pocketmine\lang\BaseLang;
+use pocketmine\plugin\PluginBase;
 
 class PluginLang extends BaseLang{
-	/** @var InventoryMonitor */
+	/** @var PluginBase */
 	private $plugin;
 
 	/**
 	 * @noinspection PhpMissingParentConstructorInspection
 	 * PluginLang constructor.
 	 *
-	 * @param InventoryMonitor $plugin
-	 * @param string $lang
+	 * @param PluginBase $plugin
+	 * @param string     $lang
 	 */
-	public function __construct(InventoryMonitor $plugin, string $lang){
+	public function __construct(PluginBase $plugin, string $lang){
 		$this->langName = strtolower($lang);
 		$this->plugin = $plugin;
 
