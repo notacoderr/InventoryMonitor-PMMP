@@ -48,13 +48,85 @@ use pocketmine\network\mcpe\protocol\{
 	BlockEntityDataPacket, ContainerOpenPacket, InventoryContentPacket, UpdateBlockPacket
 };
 use pocketmine\network\mcpe\protocol\types\WindowTypes;
-use pocketmine\Player;
-use pocketmine\Server;
+use pocketmine\{
+	Player, Server
+};
 use pocketmine\tile\Spawnable;
 
 class SyncInventory extends CustomInventory{
 	/** @var SyncInventory[] */
 	protected static $instances = [];
+
+	/**
+	 * @return SyncInventory[]
+	 */
+	public static function getAll() : array{
+		return self::$instances;
+	}
+
+	/**
+	 * @param string $playerName
+	 * @param bool   $includeOffline = true
+	 *
+	 * @return null|SyncInventory
+	 */
+	public static function load(string $playerName, bool $includeOffline = true) : ?SyncInventory{
+		$syncInventory = SyncInventory::get($playerName);
+		if($syncInventory instanceof SyncInventory){
+			return $syncInventory;
+		}
+
+		$playerName = strtolower($playerName);
+		/** @var Item[] $items */
+		$items = [];
+		$server = Server::getInstance();
+		$player = $server->getPlayerExact($playerName);
+		if($player instanceof Player){
+			$inventory = $player->getInventory();
+			/** @var Item[] $items */
+			$items = $inventory->getContents(true);
+
+			$armorInventory = $player->getArmorInventory();
+			for($i = 0; $i < 4; ++$i){
+				$item = $armorInventory->getItem($i);
+				if(!$item->isNull()){
+					$items[$i + 46] = $item;
+				}
+			}
+		}elseif($includeOffline){
+			if(file_exists("{$server->getDataPath()}players/{$playerName}.dat")){
+				$nbt = $server->getOfflinePlayerData($playerName);
+				$inventoryTag = $nbt->getListTag("Inventory");
+				if($inventoryTag === null){
+					return null;
+				}else{
+					/** @var CompoundTag $itemTag */
+					foreach($inventoryTag as $i => $itemTag){
+						$slot = $itemTag->getByte("Slot");
+						if($slot > 8 && $slot < 44){ // 9-44 is PlayerInventory slot
+							$items[$slot - 9] = Item::nbtDeserialize($itemTag);
+						}elseif($slot > 99 and $slot < 104){ // 100-103 is ArmorInventory slot
+							$items[$slot + ArmorGroup::START - 100] = Item::nbtDeserialize($itemTag);
+						}
+					}
+				}
+			}else{
+				return null;
+			}
+		}else{
+			return null;
+		}
+		return new SyncInventory($playerName, $items);
+	}
+
+	/**
+	 * @param string $playerName
+	 *
+	 * @return null|SyncInventory
+	 */
+	public static function get(string $playerName) : ?SyncInventory{
+		return self::$instances[strtolower($playerName)] ?? null;
+	}
 
 	/** @var CompoundTag */
 	protected $nbt;
@@ -138,77 +210,6 @@ class SyncInventory extends CustomInventory{
 	}
 
 	/**
-	 * @return SyncInventory[]
-	 */
-	public static function getAll() : array{
-		return self::$instances;
-	}
-
-	/**
-	 * @param string $playerName
-	 * @param bool   $includeOffline = true
-	 *
-	 * @return null|SyncInventory
-	 */
-	public static function load(string $playerName, bool $includeOffline = true) : ?SyncInventory{
-		$syncInventory = SyncInventory::get($playerName);
-		if($syncInventory instanceof SyncInventory){
-			return $syncInventory;
-		}
-
-		$playerName = strtolower($playerName);
-		/** @var Item[] $items */
-		$items = [];
-		$server = Server::getInstance();
-		$player = $server->getPlayerExact($playerName);
-		if($player instanceof Player){
-			$inventory = $player->getInventory();
-			/** @var Item[] $items */
-			$items = $inventory->getContents(true);
-
-			$armorInventory = $player->getArmorInventory();
-			for($i = 0; $i < 4; ++$i){
-				$item = $armorInventory->getItem($i);
-				if(!$item->isNull()){
-					$items[$i + 46] = $item;
-				}
-			}
-		}elseif($includeOffline){
-			if(file_exists("{$server->getDataPath()}players/{$playerName}.dat")){
-				$nbt = $server->getOfflinePlayerData($playerName);
-				$inventoryTag = $nbt->getListTag("Inventory");
-				if($inventoryTag === null){
-					return null;
-				}else{
-					/** @var CompoundTag $itemTag */
-					foreach($inventoryTag as $i => $itemTag){
-						$slot = $itemTag->getByte("Slot");
-						if($slot > 8 && $slot < 44){ // 9-44 is PlayerInventory slot
-							$items[$slot - 9] = Item::nbtDeserialize($itemTag);
-						}elseif($slot > 99 and $slot < 104){ // 100-103 is ArmorInventory slot
-							$items[$slot + ArmorGroup::START - 100] = Item::nbtDeserialize($itemTag);
-						}
-					}
-				}
-			}else{
-				return null;
-			}
-		}else{
-			return null;
-		}
-		return new SyncInventory($playerName, $items);
-	}
-
-	/**
-	 * @param string $playerName
-	 *
-	 * @return null|SyncInventory
-	 */
-	public static function get(string $playerName) : ?SyncInventory{
-		return self::$instances[strtolower($playerName)] ?? null;
-	}
-
-	/**
 	 * @param Player $who
 	 */
 	public function onOpen(Player $who) : void{
@@ -240,6 +241,27 @@ class SyncInventory extends CustomInventory{
 		if(empty($this->viewers)){
 			$this->delete();
 		}
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getName() : string{
+		return "SyncInventory";
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getDefaultSize() : int{
+		return 54;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getNetworkType() : int{
+		return WindowTypes::CONTAINER;
 	}
 
 	public function delete() : void{
@@ -347,27 +369,6 @@ class SyncInventory extends CustomInventory{
 			}
 		}
 		unset($this->vectors[$key]);
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getName() : string{
-		return "SyncInventory";
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getDefaultSize() : int{
-		return 54;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function getNetworkType() : int{
-		return WindowTypes::CONTAINER;
 	}
 
 	/**

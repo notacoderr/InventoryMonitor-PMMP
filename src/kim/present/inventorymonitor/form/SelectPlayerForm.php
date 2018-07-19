@@ -29,35 +29,13 @@ namespace kim\present\inventorymonitor\form;
 use kim\present\inventorymonitor\inventory\SyncInventory;
 use kim\present\inventorymonitor\InventoryMonitor;
 use kim\present\inventorymonitor\utils\Utils;
+use pocketmine\{
+	Player, Server
+};
 use pocketmine\network\mcpe\protocol\ModalFormRequestPacket;
-use pocketmine\Player;
-use pocketmine\Server;
 
 class SelectPlayerForm extends MenuForm{
 	private static $instances = [];
-
-	/** @var InventoryMonitor */
-	private $plugin;
-
-	/** @var Player */
-	private $player;
-
-	/** @var string[] */
-	private $playerNames;
-
-	/**
-	 * SelectPlayerForm constructor.
-	 *
-	 * @param InventoryMonitor $plugin
-	 * @param Player           $player
-	 */
-	public function __construct(InventoryMonitor $plugin, Player $player){
-		$this->plugin = $plugin;
-		$this->player = $player;
-
-		$lang = $plugin->getLanguage();
-		parent::__construct($lang->translateString("forms.select.title"), $lang->translateString("forms.select.text"), []);
-	}
 
 	/**
 	 * @return SelectPlayerForm[]
@@ -80,6 +58,29 @@ class SelectPlayerForm extends MenuForm{
 	 */
 	public static function getInstance(Player $player) : ?SelectPlayerForm{
 		return self::$instances[$player->getLowerCaseName()] ?? null;
+	}
+
+	/** @var InventoryMonitor */
+	private $plugin;
+
+	/** @var Player */
+	private $player;
+
+	/** @var string[] */
+	private $playerNames;
+
+	/**
+	 * SelectPlayerForm constructor.
+	 *
+	 * @param InventoryMonitor $plugin
+	 * @param Player           $player
+	 */
+	public function __construct(InventoryMonitor $plugin, Player $player){
+		$this->plugin = $plugin;
+		$this->player = $player;
+
+		$lang = $plugin->getLanguage();
+		parent::__construct($lang->translateString("forms.select.title"), $lang->translateString("forms.select.text"), []);
 	}
 
 	/**

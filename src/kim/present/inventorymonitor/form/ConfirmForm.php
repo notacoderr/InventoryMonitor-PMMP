@@ -28,12 +28,36 @@ namespace kim\present\inventorymonitor\form;
 
 use kim\present\inventorymonitor\inventory\SyncInventory;
 use kim\present\inventorymonitor\InventoryMonitor;
+use pocketmine\{
+	Player, Server
+};
 use pocketmine\network\mcpe\protocol\ModalFormRequestPacket;
-use pocketmine\Player;
-use pocketmine\Server;
 
 class ConfirmForm extends ModalForm{
 	private static $instances = [];
+
+	/**
+	 * @return ConfirmForm[]
+	 */
+	public static function getInstances() : array{
+		return self::$instances;
+	}
+
+	/**
+	 * @param ConfirmForm[] $instances
+	 */
+	public static function setInstances(array $instances) : void{
+		self::$instances = $instances;
+	}
+
+	/**
+	 * @param Player $player
+	 *
+	 * @return null|ConfirmForm
+	 */
+	public static function getInstance(Player $player) : ?ConfirmForm{
+		return self::$instances[$player->getLowerCaseName()] ?? null;
+	}
 
 	/** @var InventoryMonitor */
 	private $plugin;
@@ -68,29 +92,6 @@ class ConfirmForm extends ModalForm{
 
 		$lang = $plugin->getLanguage();
 		parent::__construct($lang->translateString("forms.confirm.title"), $lang->translateString("forms.confirm.text." . ($this->isOnline ? "online" : "offline"), [$targetName]));
-	}
-
-	/**
-	 * @return ConfirmForm[]
-	 */
-	public static function getInstances() : array{
-		return self::$instances;
-	}
-
-	/**
-	 * @param ConfirmForm[] $instances
-	 */
-	public static function setInstances(array $instances) : void{
-		self::$instances = $instances;
-	}
-
-	/**
-	 * @param Player $player
-	 *
-	 * @return null|ConfirmForm
-	 */
-	public static function getInstance(Player $player) : ?ConfirmForm{
-		return self::$instances[$player->getLowerCaseName()] ?? null;
 	}
 
 	/**
