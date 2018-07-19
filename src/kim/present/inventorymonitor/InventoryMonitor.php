@@ -159,15 +159,6 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 	}
 
 	/**
-	 * @param string $name = ""
-	 *
-	 * @return PluginCommand
-	 */
-	public function getCommand(string $name = "") : PluginCommand{
-		return $this->command;
-	}
-
-	/**
 	 * @return PluginLang
 	 */
 	public function getLanguage() : PluginLang{
