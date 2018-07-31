@@ -30,6 +30,9 @@ use kim\present\inventorymonitor\inventory\group\{
 	ArmorGroup, CursorGroup, InvGroup, SlotGroup
 };
 use kim\present\inventorymonitor\InventoryMonitor;
+use pocketmine\{
+	Player, Server
+};
 use pocketmine\block\{
 	Block, BlockFactory
 };
@@ -48,9 +51,6 @@ use pocketmine\network\mcpe\protocol\{
 	BlockEntityDataPacket, ContainerOpenPacket, InventoryContentPacket, UpdateBlockPacket
 };
 use pocketmine\network\mcpe\protocol\types\WindowTypes;
-use pocketmine\{
-	Player, Server
-};
 use pocketmine\tile\Spawnable;
 
 class SyncInventory extends CustomInventory{
