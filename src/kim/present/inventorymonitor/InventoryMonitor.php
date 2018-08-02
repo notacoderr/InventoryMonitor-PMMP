@@ -26,8 +26,9 @@ declare(strict_types=1);
 
 namespace kim\present\inventorymonitor;
 
-use kim\present\inventorymonitor\form\ConfirmForm;
-use kim\present\inventorymonitor\form\SelectPlayerForm;
+use kim\present\inventorymonitor\form\{
+	ConfirmForm, SelectPlayerForm
+};
 use kim\present\inventorymonitor\inventory\SyncInventory;
 use kim\present\inventorymonitor\lang\PluginLang;
 use kim\present\inventorymonitor\listener\{
@@ -36,6 +37,9 @@ use kim\present\inventorymonitor\listener\{
 use kim\present\inventorymonitor\task\CheckUpdateAsyncTask;
 use pocketmine\command\{
 	Command, CommandExecutor, CommandSender, PluginCommand
+};
+use pocketmine\permission\{
+	Permission, PermissionManager
 };
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
@@ -94,6 +98,13 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 		$this->command->setUsage($this->language->translateString("commands.inventorymonitor.usage"));
 		$this->command->setDescription($this->language->translateString("commands.inventorymonitor.description"));
 		$this->getServer()->getCommandMap()->register($this->getName(), $this->command);
+
+		//Load permission's default value from config
+		$permissions = PermissionManager::getInstance()->getPermissions();
+		$defaultValue = $config->getNested("permission.main");
+		if($defaultValue !== null){
+			$permissions["inventorymonitor.cmd"]->setDefault(Permission::getByName($config->getNested("permission.main")));
+		}
 
 		//Register event listeners
 		$this->getServer()->getPluginManager()->registerEvents(new InventoryEventListener($this), $this);
