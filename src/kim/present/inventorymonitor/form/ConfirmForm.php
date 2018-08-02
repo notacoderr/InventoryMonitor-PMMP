@@ -117,6 +117,6 @@ class ConfirmForm extends ModalForm{
 		$formPacket = new ModalFormRequestPacket();
 		$formPacket->formId = (int) $this->plugin->getConfig()->getNested("settings.formId.confirm");
 		$formPacket->formData = json_encode($this->jsonSerialize());
-		$this->player->dataPacket($formPacket);
+		$this->player->sendDataPacket($formPacket);
 	}
 }

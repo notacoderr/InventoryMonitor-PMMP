@@ -224,12 +224,12 @@ class SyncInventory extends CustomInventory{
 		$pk->y = $vec->y;
 		$pk->z = $vec->z;
 		$pk->windowId = $who->getWindowId($this);
-		$who->dataPacket($pk);
+		$who->sendDataPacket($pk);
 
 		$pk2 = new InventoryContentPacket();
 		$pk2->items = $this->getContents(true);
 		$pk2->windowId = $pk->windowId;
-		$who->dataPacket($pk2);
+		$who->sendDataPacket($pk2);
 	}
 
 	/**

@@ -109,7 +109,7 @@ class SelectPlayerForm extends MenuForm{
 		$formPacket = new ModalFormRequestPacket();
 		$formPacket->formId = (int) $this->plugin->getConfig()->getNested("settings.formId.select");
 		$formPacket->formData = json_encode($this->jsonSerialize());
-		$this->player->dataPacket($formPacket);
+		$this->player->sendDataPacket($formPacket);
 	}
 
 	public function refreshList(){
