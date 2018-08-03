@@ -89,14 +89,14 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 
 		//Load language file
 		$this->language = new PluginLang($this, $config->getNested("settings.language"));
-		$this->getLogger()->info($this->language->translateString("language.selected", [$this->language->getName(), $this->language->getLang()]));
+		$this->getLogger()->info($this->language->translate("language.selected", [$this->language->getName(), $this->language->getLang()]));
 
 		//Register main command
 		$this->command = new PluginCommand($config->getNested("command.name"), $this);
 		$this->command->setPermission("inventorymonitor.cmd");
 		$this->command->setAliases($config->getNested("command.aliases"));
-		$this->command->setUsage($this->language->translateString("commands.inventorymonitor.usage"));
-		$this->command->setDescription($this->language->translateString("commands.inventorymonitor.description"));
+		$this->command->setUsage($this->language->translate("commands.inventorymonitor.usage"));
+		$this->command->setDescription($this->language->translate("commands.inventorymonitor.description"));
 		$this->getServer()->getCommandMap()->register($this->getName(), $this->command);
 
 		//Load permission's default value from config
@@ -134,7 +134,7 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 			if(isset($args[0])){
 				$syncInventory = SyncInventory::load(strtolower($args[0]));
 				if($syncInventory === null){
-					$sender->sendMessage($this->language->translateString("commands.generic.player.notFound", [$args[0]]));
+					$sender->sendMessage($this->language->translate("commands.generic.player.notFound", [$args[0]]));
 				}else{
 					$confirmForm = new ConfirmForm($this, $sender, $syncInventory);
 					$confirmForm->sendForm();
@@ -144,7 +144,7 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 				$selectForm->sendForm();
 			}
 		}else{
-			$sender->sendMessage($this->language->translateString("commands.generic.onlyPlayer"));
+			$sender->sendMessage($this->language->translate("commands.generic.onlyPlayer"));
 		}
 		return true;
 	}
