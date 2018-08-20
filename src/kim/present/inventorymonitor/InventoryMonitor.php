@@ -48,18 +48,18 @@ class InventoryMonitor extends PluginBase implements CommandExecutor{
 	/** @var InventoryMonitor */
 	private static $instance;
 
-	/** @var PluginLang */
-	private $language;
-
-	/** @var PluginCommand */
-	private $command;
-
 	/**
 	 * @return InventoryMonitor
 	 */
 	public static function getInstance() : InventoryMonitor{
 		return self::$instance;
 	}
+
+	/** @var PluginLang */
+	private $language;
+
+	/** @var PluginCommand */
+	private $command;
 
 	/**
 	 * Called when the plugin is loaded, before calling onEnable()
