@@ -38,15 +38,15 @@ use pocketmine\network\mcpe\protocol\ModalFormResponsePacket;
 
 class PlayerEventListener implements Listener{
 	/** @var InventoryMonitor */
-	private $owner;
+	private $plugin;
 
 	/**
 	 * PlayerEventListener constructor.
 	 *
-	 * @param InventoryMonitor $owner
+	 * @param InventoryMonitor $plugin
 	 */
-	public function __construct(InventoryMonitor $owner){
-		$this->owner = $owner;
+	public function __construct(InventoryMonitor $plugin){
+		$this->plugin = $plugin;
 	}
 
 	/**
@@ -70,7 +70,7 @@ class PlayerEventListener implements Listener{
 	public function onDataPacketReceiveEvent(DataPacketReceiveEvent $event) : void{
 		$pk = $event->getPacket();
 		if($pk instanceof ModalFormResponsePacket){
-			$config = $this->owner->getConfig();
+			$config = $this->plugin->getConfig();
 			$player = $event->getPlayer();
 			if($pk->formId === (int) $config->getNested("settings.formId.select")){
 				$form = SelectPlayerForm::getInstance($player);
