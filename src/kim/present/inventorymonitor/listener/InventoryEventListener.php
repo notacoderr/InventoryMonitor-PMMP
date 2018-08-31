@@ -42,15 +42,15 @@ use pocketmine\Player;
 
 class InventoryEventListener implements Listener{
 	/** @var InventoryMonitor */
-	private $owner;
+	private $plugin;
 
 	/**
 	 * InventoryEventListener constructor.
 	 *
-	 * @param InventoryMonitor $owner
+	 * @param InventoryMonitor $plugin
 	 */
-	public function __construct(InventoryMonitor $owner){
-		$this->owner = $owner;
+	public function __construct(InventoryMonitor $plugin){
+		$this->plugin = $plugin;
 	}
 
 	/**
