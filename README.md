@@ -1,4 +1,4 @@
-# <img src="./assets/icon/index.svg" height="50" width="50"> InventoryMonitor  
+# <img src="https://rawgit.com/PresentKim/SVG-files/master/plugin-icons/inventorymonitor.svg" height="50" width="50"> InventoryMonitor  
 __A plugin for [PMMP](https://pmmp.io) :: Monitoring player inventory!__  
   
 [![license](https://img.shields.io/github/license/Blugin/InventoryMonitor-PMMP.svg?label=License)](./LICENSE)
