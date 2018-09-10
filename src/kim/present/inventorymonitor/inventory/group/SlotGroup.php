@@ -51,7 +51,7 @@ abstract class SlotGroup{
 	 * @return bool
 	 */
 	public function validate(int $slot) : bool{
-		return $slot >= $this::START && $slot <= $this::END;
+		return $slot >= static::START && $slot <= static::END;
 	}
 
 	/**
@@ -59,7 +59,7 @@ abstract class SlotGroup{
 	 * @param Item $item
 	 */
 	public function setItem(int $slot, Item $item) : void{
-		$this->onUpdate($slot - $this::START, $item);
+		$this->onUpdate($slot - static::START, $item);
 	}
 
 	/**
