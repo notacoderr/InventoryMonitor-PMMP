@@ -322,7 +322,7 @@ class SyncInventory extends CustomInventory{
 			$pk->y = $vec->y;
 			$pk->z = $vec->z;
 			$pk->blockRuntimeId = BlockFactory::toStaticRuntimeId(Block::CHEST);
-			$pk->flags = UpdateBlockPacket::FLAG_NONE;
+			$pk->flags = 0;
 			$who->sendDataPacket($pk);
 
 
@@ -358,7 +358,7 @@ class SyncInventory extends CustomInventory{
 			$pk->y = $vec->y;
 			$pk->z = $vec->z;
 			$pk->blockRuntimeId = BlockFactory::toStaticRuntimeId($block->getId(), $block->getDamage());
-			$pk->flags = UpdateBlockPacket::FLAG_NONE;
+			$pk->flags = 0;
 			$who->sendDataPacket($pk);
 
 			$tile = $who->getLevel()->getTile($vec);
