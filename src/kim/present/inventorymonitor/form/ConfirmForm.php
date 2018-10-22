@@ -26,9 +26,7 @@ namespace kim\present\inventorymonitor\form;
 
 use kim\present\inventorymonitor\inventory\SyncInventory;
 use kim\present\inventorymonitor\InventoryMonitor;
-use pocketmine\{
-	Player, Server
-};
+use pocketmine\{Player, Server};
 use pocketmine\network\mcpe\protocol\ModalFormRequestPacket;
 
 class ConfirmForm extends ModalForm{

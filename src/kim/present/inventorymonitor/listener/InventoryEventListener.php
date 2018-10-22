@@ -24,14 +24,10 @@ declare(strict_types=1);
 
 namespace kim\present\inventorymonitor\listener;
 
-use kim\present\inventorymonitor\inventory\group\{
-	ArmorGroup, CursorGroup, InvGroup
-};
+use kim\present\inventorymonitor\inventory\group\{ArmorGroup, CursorGroup, InvGroup};
 use kim\present\inventorymonitor\inventory\SyncInventory;
 use kim\present\inventorymonitor\InventoryMonitor;
-use pocketmine\event\entity\{
-	EntityArmorChangeEvent, EntityInventoryChangeEvent
-};
+use pocketmine\event\entity\{EntityArmorChangeEvent, EntityInventoryChangeEvent};
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
 use pocketmine\inventory\PlayerCursorInventory;

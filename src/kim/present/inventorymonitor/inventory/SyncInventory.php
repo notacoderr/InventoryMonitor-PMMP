@@ -24,30 +24,16 @@ declare(strict_types=1);
 
 namespace kim\present\inventorymonitor\inventory;
 
-use kim\present\inventorymonitor\inventory\group\{
-	ArmorGroup, CursorGroup, InvGroup, SlotGroup
-};
+use kim\present\inventorymonitor\inventory\group\{ArmorGroup, CursorGroup, InvGroup, SlotGroup};
 use kim\present\inventorymonitor\InventoryMonitor;
-use pocketmine\{
-	Player, Server
-};
-use pocketmine\block\{
-	Block, BlockFactory
-};
-use pocketmine\inventory\{
-	BaseInventory, CustomInventory
-};
+use pocketmine\{Player, Server};
+use pocketmine\block\{Block, BlockFactory};
+use pocketmine\inventory\{BaseInventory, CustomInventory};
 use pocketmine\item\Item;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\{
-	NBT, NetworkLittleEndianNBTStream
-};
-use pocketmine\nbt\tag\{
-	CompoundTag, ListTag, StringTag
-};
-use pocketmine\network\mcpe\protocol\{
-	BlockEntityDataPacket, ContainerOpenPacket, InventoryContentPacket, UpdateBlockPacket
-};
+use pocketmine\nbt\{NBT, NetworkLittleEndianNBTStream};
+use pocketmine\nbt\tag\{CompoundTag, ListTag, StringTag};
+use pocketmine\network\mcpe\protocol;
 use pocketmine\network\mcpe\protocol\types\WindowTypes;
 use pocketmine\tile\Spawnable;
 
@@ -215,7 +201,7 @@ class SyncInventory extends CustomInventory{
 
 		$vec = $this->vectors[$key = $who->getLowerCaseName()];
 
-		$pk = new ContainerOpenPacket();
+		$pk = new protocol\ContainerOpenPacket();
 		$pk->type = WindowTypes::CONTAINER;
 		$pk->entityUniqueId = -1;
 		$pk->x = $vec->x;
@@ -224,7 +210,7 @@ class SyncInventory extends CustomInventory{
 		$pk->windowId = $who->getWindowId($this);
 		$who->sendDataPacket($pk);
 
-		$pk2 = new InventoryContentPacket();
+		$pk2 = new protocol\InventoryContentPacket();
 		$pk2->items = $this->getContents(true);
 		$pk2->windowId = $pk->windowId;
 		$who->sendDataPacket($pk2);
@@ -317,7 +303,7 @@ class SyncInventory extends CustomInventory{
 		$vec = $this->vectors[$key];
 
 		for($i = 0; $i < 2; $i++){
-			$pk = new UpdateBlockPacket();
+			$pk = new protocol\UpdateBlockPacket();
 			$pk->x = $vec->x + $i;
 			$pk->y = $vec->y;
 			$pk->z = $vec->z;
@@ -334,7 +320,7 @@ class SyncInventory extends CustomInventory{
 			$player = Server::getInstance()->getPlayerExact($this->playerName);
 			$this->nbt->setString("CustomName", InventoryMonitor::getInstance()->getLanguage()->translate("chest.name", [$player instanceof Player ? $player->getName() : $this->playerName]));
 
-			$pk = new BlockEntityDataPacket();
+			$pk = new protocol\BlockEntityDataPacket();
 			$pk->x = $vec->x + $i;
 			$pk->y = $vec->y;
 			$pk->z = $vec->z;
@@ -353,7 +339,7 @@ class SyncInventory extends CustomInventory{
 		for($i = 0; $i < 2; $i++){
 			$block = $who->getLevel()->getBlock($vec = $this->vectors[$key]->add($i, 0, 0));
 
-			$pk = new UpdateBlockPacket();
+			$pk = new protocol\UpdateBlockPacket();
 			$pk->x = $vec->x;
 			$pk->y = $vec->y;
 			$pk->z = $vec->z;

@@ -26,7 +26,6 @@ namespace kim\present\inventorymonitor\task;
 
 use kim\present\inventorymonitor\InventoryMonitor;
 use pocketmine\scheduler\AsyncTask;
-use pocketmine\Server;
 
 class ShortenDownloadURLAsyncTask extends AsyncTask{
 	private const URL = "https://git.io";

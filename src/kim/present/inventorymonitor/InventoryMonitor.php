@@ -24,21 +24,13 @@ declare(strict_types=1);
 
 namespace kim\present\inventorymonitor;
 
-use kim\present\inventorymonitor\form\{
-	ConfirmForm, SelectPlayerForm
-};
+use kim\present\inventorymonitor\form\{ConfirmForm, SelectPlayerForm};
 use kim\present\inventorymonitor\inventory\SyncInventory;
 use kim\present\inventorymonitor\lang\PluginLang;
-use kim\present\inventorymonitor\listener\{
-	InventoryEventListener, PlayerEventListener
-};
+use kim\present\inventorymonitor\listener\{InventoryEventListener, PlayerEventListener};
 use kim\present\inventorymonitor\task\CheckUpdateAsyncTask;
-use pocketmine\command\{
-	Command, CommandSender, PluginCommand
-};
-use pocketmine\permission\{
-	Permission, PermissionManager
-};
+use pocketmine\command\{Command, CommandSender, PluginCommand};
+use pocketmine\permission\{Permission, PermissionManager};
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 
