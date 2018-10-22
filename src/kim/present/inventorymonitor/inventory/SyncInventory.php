@@ -137,7 +137,7 @@ class SyncInventory extends CustomInventory{
 		$this->groups[] = new ArmorGroup($this);
 		$this->groups[] = new CursorGroup($this);
 
-		$borderItem = Item::get(Block::SKULL_BLOCK);
+		$borderItem = Item::get(Block::COBWEB);
 		$borderItem->setCustomName("");
 		for($i = 0; $i < 54; ++$i){
 			if(!$this->isValidSlot($i)){
