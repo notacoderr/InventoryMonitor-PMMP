@@ -32,7 +32,7 @@ use pocketmine\inventory\{BaseInventory, CustomInventory};
 use pocketmine\item\Item;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\{NBT, NetworkLittleEndianNBTStream};
-use pocketmine\nbt\tag\{CompoundTag, ListTag, StringTag};
+use pocketmine\nbt\tag\{CompoundTag, IntTag, ListTag, StringTag};
 use pocketmine\network\mcpe\protocol;
 use pocketmine\network\mcpe\protocol\types\WindowTypes;
 use pocketmine\tile\Spawnable;
@@ -112,9 +112,6 @@ class SyncInventory extends CustomInventory{
 		return self::$instances[strtolower($playerName)] ?? null;
 	}
 
-	/** @var CompoundTag */
-	protected $nbt;
-
 	/** @var Vector3[] */
 	protected $vectors = [];
 
@@ -131,7 +128,7 @@ class SyncInventory extends CustomInventory{
 	 * @param Item[] $items
 	 */
 	public function __construct(string $playerName, array $items){
-		parent::__construct(new Vector3(0, 0, 0), $items, 54, null);
+		parent::__construct(new Vector3(), $items, 54, null);
 
 		$this->groups[] = new InvGroup($this);
 		$this->groups[] = new ArmorGroup($this);
@@ -146,9 +143,6 @@ class SyncInventory extends CustomInventory{
 		}
 
 		$this->playerName = strtolower($playerName);
-		$this->nbt = new CompoundTag("", [
-			new StringTag("id", "Chest"),
-		]);
 		self::$instances[$this->playerName] = $this;
 	}
 
@@ -199,7 +193,7 @@ class SyncInventory extends CustomInventory{
 	public function onOpen(Player $who) : void{
 		BaseInventory::onOpen($who);
 
-		$vec = $this->vectors[$key = $who->getLowerCaseName()];
+		$vec = $this->vectors[$who->getLowerCaseName()];
 
 		$pk = new protocol\ContainerOpenPacket();
 		$pk->type = WindowTypes::CONTAINER;
@@ -312,19 +306,22 @@ class SyncInventory extends CustomInventory{
 			$who->sendDataPacket($pk);
 
 
-			$this->nbt->setInt("x", $vec->x + $i);
-			$this->nbt->setInt("y", $vec->y);
-			$this->nbt->setInt("z", $vec->z);
-			$this->nbt->setInt("pairx", $vec->x + (1 - $i));
-			$this->nbt->setInt("pairz", $vec->z);
 			$player = Server::getInstance()->getPlayerExact($this->playerName);
-			$this->nbt->setString("CustomName", InventoryMonitor::getInstance()->getLanguage()->translate("chest.name", [$player instanceof Player ? $player->getName() : $this->playerName]));
+			$nbt = new CompoundTag("", [
+				new StringTag("id", "Chest"),
+				new IntTag("x", $vec->x + $i),
+				new IntTag("y", $vec->y),
+				new IntTag("z", $vec->z),
+				new IntTag("pairx", $vec->x + (1 - $i)),
+				new IntTag("pairz", $vec->z),
+				new StringTag("CustomName", InventoryMonitor::getInstance()->getLanguage()->translate("chest.name", [$player instanceof Player ? $player->getName() : $this->playerName])),
+			]);
 
 			$pk = new protocol\BlockEntityDataPacket();
 			$pk->x = $vec->x + $i;
 			$pk->y = $vec->y;
 			$pk->z = $vec->z;
-			$pk->namedtag = (new NetworkLittleEndianNBTStream())->write($this->nbt);
+			$pk->namedtag = (new NetworkLittleEndianNBTStream())->write($nbt);
 			$who->sendDataPacket($pk);
 		}
 	}
