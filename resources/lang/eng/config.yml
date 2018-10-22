@@ -7,10 +7,6 @@ settings:
   #Available: eng, kor
   language: "eng"
 
-  formId:
-    select: 1200960900 #120096090 + "0"
-    confirm: 1200960901 #120096090 + "1"
-
   update-check: false
 
 

@@ -26,6 +26,7 @@ namespace kim\present\inventorymonitor\inventory;
 
 use kim\present\inventorymonitor\inventory\group\{ArmorGroup, CursorGroup, InvGroup, SlotGroup};
 use kim\present\inventorymonitor\InventoryMonitor;
+use kim\present\inventorymonitor\task\SendDataPacketTask;
 use pocketmine\{Player, Server};
 use pocketmine\block\{Block, BlockFactory};
 use pocketmine\inventory\{BaseInventory, CustomInventory};
@@ -193,6 +194,7 @@ class SyncInventory extends CustomInventory{
 	public function onOpen(Player $who) : void{
 		BaseInventory::onOpen($who);
 
+		$this->sendFakeChestBlock($who);
 		$vec = $this->vectors[$who->getLowerCaseName()];
 
 		$pk = new protocol\ContainerOpenPacket();
@@ -202,12 +204,12 @@ class SyncInventory extends CustomInventory{
 		$pk->y = $vec->y;
 		$pk->z = $vec->z;
 		$pk->windowId = $who->getWindowId($this);
-		$who->sendDataPacket($pk);
 
 		$pk2 = new protocol\InventoryContentPacket();
 		$pk2->items = $this->getContents(true);
 		$pk2->windowId = $pk->windowId;
-		$who->sendDataPacket($pk2);
+
+		InventoryMonitor::getInstance()->getScheduler()->scheduleDelayedTask(new SendDataPacketTask($who, $pk, $pk2), 5);
 	}
 
 	/**
