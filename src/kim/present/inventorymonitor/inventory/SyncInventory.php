@@ -26,7 +26,6 @@ namespace kim\present\inventorymonitor\inventory;
 
 use kim\present\inventorymonitor\inventory\group\{ArmorGroup, CursorGroup, InvGroup, SlotGroup};
 use kim\present\inventorymonitor\InventoryMonitor;
-use kim\present\inventorymonitor\task\SendDataPacketTask;
 use pocketmine\{Player, Server};
 use pocketmine\block\{Block, BlockFactory};
 use pocketmine\inventory\{BaseInventory, CustomInventory};
@@ -36,6 +35,7 @@ use pocketmine\nbt\{NBT, NetworkLittleEndianNBTStream};
 use pocketmine\nbt\tag\{CompoundTag, IntTag, ListTag, StringTag};
 use pocketmine\network\mcpe\protocol;
 use pocketmine\network\mcpe\protocol\types\WindowTypes;
+use pocketmine\scheduler\ClosureTask;
 use pocketmine\tile\Spawnable;
 
 class SyncInventory extends CustomInventory{
@@ -197,6 +197,7 @@ class SyncInventory extends CustomInventory{
 		$this->sendFakeChestBlock($who);
 		$vec = $this->vectors[$who->getLowerCaseName()];
 
+		$packets = [];
 		$pk = new protocol\ContainerOpenPacket();
 		$pk->type = WindowTypes::CONTAINER;
 		$pk->entityUniqueId = -1;
@@ -204,12 +205,19 @@ class SyncInventory extends CustomInventory{
 		$pk->y = $vec->y;
 		$pk->z = $vec->z;
 		$pk->windowId = $who->getWindowId($this);
+		$packets[] = $pk;
 
 		$pk2 = new protocol\InventoryContentPacket();
 		$pk2->items = $this->getContents(true);
 		$pk2->windowId = $pk->windowId;
+		$packets[] = $pk2;
 
-		InventoryMonitor::getInstance()->getScheduler()->scheduleDelayedTask(new SendDataPacketTask($who, $pk, $pk2), (int) InventoryMonitor::getInstance()->getConfig()->getNested("settings.inventory-display-delay", 10));
+		$plugin = InventoryMonitor::getInstance();
+		$plugin->getScheduler()->scheduleDelayedTask(new ClosureTask(function(int $currentTick) use ($who, $packets) : void{
+			foreach($packets as $key => $packet){
+				$who->sendDataPacket($packet);
+			}
+		}), (int) $plugin->getConfig()->getNested("settings.inventory-display-delay", 10));
 	}
 
 	/**
