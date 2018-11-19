@@ -132,7 +132,6 @@ class InventoryMonitor extends PluginBase{
 			return true;
 		}
 
-
 		$player = $this->getServer()->getPlayer($args[0]);
 		if($player instanceof Player){
 			$sender->addWindow(SyncInventory::load($player->getName()));
