@@ -126,7 +126,7 @@ class InventoryMonitor extends PluginBase{
 			return false;
 		}
 
-		$syncInventory = SyncInventory::load(strtolower($args[0]));
+		$syncInventory = SyncInventory::load($args[0]);
 		if($syncInventory === null){
 			$sender->sendMessage($this->language->translate("commands.generic.player.notFound", [$args[0]]));
 		}else{
