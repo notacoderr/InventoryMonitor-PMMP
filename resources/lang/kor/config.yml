@@ -9,6 +9,10 @@ settings:
 
   update-check: false
 
+  #인벤토리 표시 딜레이 (단위: 1/20초)
+  #만약 인벤토리가 바로 닫힌다면 이 값을 더 높게 설정하십시오
+  inventory-display-delay: 10
+
 
 command:
   #메인 명령어의 이름

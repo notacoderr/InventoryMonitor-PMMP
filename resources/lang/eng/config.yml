@@ -9,6 +9,10 @@ settings:
 
   update-check: false
 
+  #Inventory display delay (unit: 1/20sec)
+  #If inventory closes immediately set this value higher
+  inventory-display-delay: 10
+
 
 command:
   #Name of main command
