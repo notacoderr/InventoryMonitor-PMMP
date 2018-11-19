@@ -96,8 +96,8 @@ class InventoryMonitor extends PluginBase{
 		}
 
 		//Register event listeners
-		$this->getServer()->getPluginManager()->registerEvents(new InventoryEventListener($this), $this);
-		$this->getServer()->getPluginManager()->registerEvents(new PlayerEventListener($this), $this);
+		$this->getServer()->getPluginManager()->registerEvents(new InventoryEventListener(), $this);
+		$this->getServer()->getPluginManager()->registerEvents(new PlayerEventListener(), $this);
 	}
 
 	/**

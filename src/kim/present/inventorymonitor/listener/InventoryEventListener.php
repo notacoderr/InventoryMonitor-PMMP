@@ -26,7 +26,6 @@ namespace kim\present\inventorymonitor\listener;
 
 use kim\present\inventorymonitor\inventory\group\{ArmorGroup, CursorGroup, InvGroup};
 use kim\present\inventorymonitor\inventory\SyncInventory;
-use kim\present\inventorymonitor\InventoryMonitor;
 use pocketmine\event\entity\{EntityArmorChangeEvent, EntityInventoryChangeEvent};
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
@@ -35,18 +34,6 @@ use pocketmine\inventory\transaction\action\SlotChangeAction;
 use pocketmine\Player;
 
 class InventoryEventListener implements Listener{
-	/** @var InventoryMonitor */
-	private $plugin;
-
-	/**
-	 * InventoryEventListener constructor.
-	 *
-	 * @param InventoryMonitor $plugin
-	 */
-	public function __construct(InventoryMonitor $plugin){
-		$this->plugin = $plugin;
-	}
-
 	/**
 	 * @priority MONITOR
 	 *
