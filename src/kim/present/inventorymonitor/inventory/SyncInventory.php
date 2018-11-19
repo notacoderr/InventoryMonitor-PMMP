@@ -139,7 +139,7 @@ class SyncInventory extends CustomInventory{
 		$borderItem->setCustomName("");
 		for($i = 0; $i < 54; ++$i){
 			if(!$this->isValidSlot($i)){
-				$this->setItem($i, clone $borderItem);
+				$this->setItem($i, $borderItem);
 			}
 		}
 
