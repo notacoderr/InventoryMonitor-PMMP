@@ -78,28 +78,28 @@ class SyncInventory extends CustomInventory{
 					$items[$i + 46] = $item;
 				}
 			}
-		}elseif($includeOffline){
-			if(file_exists("{$server->getDataPath()}players/{$playerName}.dat")){
-				$nbt = $server->getOfflinePlayerData($playerName);
-				$inventoryTag = $nbt->getListTag("Inventory");
-				if($inventoryTag === null){
-					return null;
-				}else{
-					/** @var CompoundTag $itemTag */
-					foreach($inventoryTag as $i => $itemTag){
-						$slot = $itemTag->getByte("Slot");
-						if($slot > 8 && $slot < 44){ // 9-44 is PlayerInventory slot
-							$items[$slot - 9] = Item::nbtDeserialize($itemTag);
-						}elseif($slot > 99 and $slot < 104){ // 100-103 is ArmorInventory slot
-							$items[$slot + ArmorGroup::START - 100] = Item::nbtDeserialize($itemTag);
-						}
-					}
-				}
-			}else{
-				return null;
-			}
-		}else{
+		}elseif(!$includeOffline){
 			return null;
+		}
+
+		if(!file_exists("{$server->getDataPath()}players/{$playerName}.dat")){
+			return null;
+		}
+
+		$nbt = $server->getOfflinePlayerData($playerName);
+		$inventoryTag = $nbt->getListTag("Inventory");
+		if($inventoryTag === null){
+			return null;
+		}else{
+			/** @var CompoundTag $itemTag */
+			foreach($inventoryTag as $i => $itemTag){
+				$slot = $itemTag->getByte("Slot");
+				if($slot > 8 && $slot < 44){ // 9-44 is PlayerInventory slot
+					$items[$slot - 9] = Item::nbtDeserialize($itemTag);
+				}elseif($slot > 99 and $slot < 104){ // 100-103 is ArmorInventory slot
+					$items[$slot + ArmorGroup::START - 100] = Item::nbtDeserialize($itemTag);
+				}
+			}
 		}
 		return new SyncInventory($playerName, $items);
 	}
@@ -343,6 +343,7 @@ class SyncInventory extends CustomInventory{
 		if(!isset($this->vectors[$key = $who->getLowerCaseName()])){
 			return;
 		}
+
 		for($i = 0; $i < 2; $i++){
 			$block = $who->getLevel()->getBlock($vec = $this->vectors[$key]->add($i, 0, 0));
 

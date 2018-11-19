@@ -67,8 +67,6 @@ class InventoryMonitor extends PluginBase{
 		$this->saveResource("lang/language.list", false);
 
 		//Load config file
-		$this->saveDefaultConfig();
-		$this->reloadConfig();
 		$config = $this->getConfig();
 
 		//Check latest version
@@ -119,19 +117,20 @@ class InventoryMonitor extends PluginBase{
 	 * @return bool
 	 */
 	public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
-		if($sender instanceof Player){
-			if(isset($args[0])){
-				$syncInventory = SyncInventory::load(strtolower($args[0]));
-				if($syncInventory === null){
-					$sender->sendMessage($this->language->translate("commands.generic.player.notFound", [$args[0]]));
-				}else{
-					$sender->addWindow($syncInventory);
-				}
-			}else{
-				return false;
-			}
-		}else{
+		if(!$sender instanceof Player){
 			$sender->sendMessage($this->language->translate("commands.generic.onlyPlayer"));
+			return true;
+		}
+
+		if(!isset($args[0])){
+			return false;
+		}
+
+		$syncInventory = SyncInventory::load(strtolower($args[0]));
+		if($syncInventory === null){
+			$sender->sendMessage($this->language->translate("commands.generic.player.notFound", [$args[0]]));
+		}else{
+			$sender->addWindow($syncInventory);
 		}
 		return true;
 	}
@@ -147,13 +146,14 @@ class InventoryMonitor extends PluginBase{
 			$resource = $this->getResource("lang/" . PluginLang::FALLBACK_LANGUAGE . "/config.yml");
 		}
 
-		if(!file_exists($configFile = $this->getDataFolder() . "config.yml")){
-			$ret = stream_copy_to_stream($resource, $fp = fopen($configFile, "wb")) > 0;
-			fclose($fp);
-			fclose($resource);
-			return $ret;
+		if(file_exists($configFile = $this->getDataFolder() . "config.yml")){
+			return false;
 		}
-		return false;
+
+		$ret = stream_copy_to_stream($resource, $fp = fopen($configFile, "wb")) > 0;
+		fclose($fp);
+		fclose($resource);
+		return $ret;
 	}
 
 	/**
