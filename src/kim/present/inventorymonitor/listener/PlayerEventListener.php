@@ -35,7 +35,7 @@ class PlayerEventListener implements Listener{
 	 * @param PlayerPreLoginEvent $event
 	 */
 	public function onPlayerPreLoginEvent(PlayerPreLoginEvent $event){
-		$playerName = $event->getPlayer()->getLowerCaseName();
+		$playerName = strtolower($event->getPlayerInfo()->getUsername());
 		$syncInventory = SyncInventory::get($playerName);
 		if($syncInventory !== null){
 			$syncInventory->save();

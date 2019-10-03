@@ -26,19 +26,24 @@ namespace kim\present\inventorymonitor\inventory;
 
 use kim\present\inventorymonitor\inventory\group\{ArmorGroup, CursorGroup, InvGroup, SlotGroup};
 use kim\present\inventorymonitor\InventoryMonitor;
-use pocketmine\{Player, Server};
-use pocketmine\block\{Block, BlockFactory};
-use pocketmine\inventory\{BaseInventory, CustomInventory};
+use pocketmine\item\ItemFactory;
+use pocketmine\nbt\TreeRoot;
+use pocketmine\network\mcpe\serializer\NetworkNbtSerializer;
+use pocketmine\player\Player;
+use pocketmine\Server;
+use pocketmine\block\BlockLegacyIds;
+use pocketmine\inventory\{BaseInventory, BlockInventory};
 use pocketmine\item\Item;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\{NBT, NetworkLittleEndianNBTStream};
-use pocketmine\nbt\tag\{CompoundTag, IntTag, ListTag, StringTag};
+use pocketmine\nbt\NBT;
+use pocketmine\nbt\tag\{CompoundTag, ListTag};
 use pocketmine\network\mcpe\protocol;
-use pocketmine\network\mcpe\protocol\types\WindowTypes;
+use pocketmine\network\mcpe\protocol\types\inventory\WindowTypes;
 use pocketmine\scheduler\ClosureTask;
-use pocketmine\tile\Spawnable;
+use pocketmine\block\tile\Spawnable;
+use pocketmine\world\Position;
 
-class SyncInventory extends CustomInventory{
+class SyncInventory extends BlockInventory{
 	/** @var SyncInventory[] */
 	protected static $instances = [];
 
@@ -129,13 +134,13 @@ class SyncInventory extends CustomInventory{
 	 * @param Item[] $items
 	 */
 	public function __construct(string $playerName, array $items){
-		parent::__construct(new Vector3(), $items, 54, null);
+		parent::__construct(new Position(), 54);
 
 		$this->groups[] = new InvGroup($this);
 		$this->groups[] = new ArmorGroup($this);
 		$this->groups[] = new CursorGroup($this);
 
-		$borderItem = Item::get(-161); //barrier
+		$borderItem = ItemFactory::get(-161); //barrier
 		$borderItem->setCustomName("");
 		for($i = 0; $i < 54; ++$i){
 			if(!$this->isValidSlot($i)){
@@ -145,6 +150,10 @@ class SyncInventory extends CustomInventory{
 
 		$this->playerName = strtolower($playerName);
 		self::$instances[$this->playerName] = $this;
+
+		foreach($items as $slot => $item){
+			$this->setItem($slot, $item);
+		}
 	}
 
 	/**
@@ -178,14 +187,14 @@ class SyncInventory extends CustomInventory{
 	 *
 	 * @return bool
 	 */
-	public function setItem(int $index, Item $item, bool $send = true, $sync = true) : bool{
+	public function setItem(int $index, Item $item, bool $send = true, $sync = true) : void{
 		if($sync){
 			$slotGroup = $this->getSlotGroup($index);
 			if($slotGroup instanceof SlotGroup){
 				$slotGroup->setItem($index, $item);
 			}
 		}
-		return parent::setItem($index, $item, $send);
+		parent::setItem($index, $item, $send);
 	}
 
 	/**
@@ -195,7 +204,7 @@ class SyncInventory extends CustomInventory{
 		BaseInventory::onOpen($who);
 
 		$this->sendFakeChestBlock($who);
-		$vec = $this->vectors[$who->getLowerCaseName()];
+		$vec = $this->vectors[strtolower($who->getName())];
 
 		$packets = [];
 		$pk = new protocol\ContainerOpenPacket();
@@ -204,7 +213,7 @@ class SyncInventory extends CustomInventory{
 		$pk->x = $vec->x;
 		$pk->y = $vec->y;
 		$pk->z = $vec->z;
-		$pk->windowId = $who->getWindowId($this);
+		$pk->windowId = $who->getNetworkSession()->getInvManager()->getWindowId($this);
 		$packets[] = $pk;
 
 		$pk2 = new protocol\InventoryContentPacket();
@@ -215,7 +224,7 @@ class SyncInventory extends CustomInventory{
 		$plugin = InventoryMonitor::getInstance();
 		$plugin->getScheduler()->scheduleDelayedTask(new ClosureTask(function(int $currentTick) use ($who, $packets) : void{
 			foreach($packets as $key => $packet){
-				$who->sendDataPacket($packet);
+				$who->getNetworkSession()->sendDataPacket($packet);
 			}
 		}), (int) $plugin->getConfig()->getNested("settings.inventory-display-delay", 10));
 	}
@@ -254,7 +263,7 @@ class SyncInventory extends CustomInventory{
 
 	public function delete() : void{
 		foreach($this->viewers as $key => $who){
-			$this->close($who);
+			$this->onClose($who);
 		}
 		$this->save();
 		unset(self::$instances[$this->playerName]);
@@ -278,7 +287,7 @@ class SyncInventory extends CustomInventory{
 			}
 		}else{
 			$namedTag = $server->getOfflinePlayerData($this->playerName);
-			$inventoryTag = new ListTag("Inventory", [], NBT::TAG_Compound);
+			$inventoryTag = new ListTag([], NBT::TAG_Compound);
 			for($i = InvGroup::START; $i <= InvGroup::END; ++$i){
 				$item = $this->getItem($i);
 				if(!$item->isNull()){
@@ -291,7 +300,7 @@ class SyncInventory extends CustomInventory{
 					$inventoryTag->push($item->nbtSerialize($i - ArmorGroup::START + 100));
 				}
 			}
-			$namedTag->setTag($inventoryTag);
+			$namedTag->setTag("Inventory", $inventoryTag);
 			$server->saveOfflinePlayerData($this->playerName, $namedTag);
 		}
 	}
@@ -300,7 +309,7 @@ class SyncInventory extends CustomInventory{
 	 * @param Player $who
 	 */
 	public function sendFakeChestBlock(Player $who) : void{
-		$this->vectors[$key = $who->getLowerCaseName()] = $who->subtract(0, 3, 0)->floor();
+		$this->vectors[$key = strtolower($who->getName())] = $who->getPosition()->subtract(0, 3, 0)->floor();
 		if($this->vectors[$key]->y < 0){
 			$this->vectors[$key]->y = 0;
 		}
@@ -311,12 +320,13 @@ class SyncInventory extends CustomInventory{
 			$pk->x = $vec->x + $i;
 			$pk->y = $vec->y;
 			$pk->z = $vec->z;
-			$pk->blockRuntimeId = BlockFactory::toStaticRuntimeId(Block::CHEST);
+			$pk->blockRuntimeId = protocol\types\RuntimeBlockMapping::toStaticRuntimeId(BlockLegacyIds::CHEST);
 			$pk->flags = 0;
-			$who->sendDataPacket($pk);
+			$who->getNetworkSession()->sendDataPacket($pk);
 
 
 			$player = Server::getInstance()->getPlayerExact($this->playerName);
+			/**
 			$nbt = new CompoundTag("", [
 				new StringTag("id", "Chest"),
 				new IntTag("x", $vec->x + $i),
@@ -326,13 +336,23 @@ class SyncInventory extends CustomInventory{
 				new IntTag("pairz", $vec->z),
 				new StringTag("CustomName", InventoryMonitor::getInstance()->getLanguage()->translate("chest.name", [$player instanceof Player ? $player->getName() : $this->playerName])),
 			]);
+			 */
 
-			$pk = new protocol\BlockEntityDataPacket();
+			$nbt = CompoundTag::create()
+					->setString("id", "Chest")
+					->setInt("x", $vec->x + $i)
+					->setInt("y", $vec->y)
+					->setInt("z", $vec->z)
+					->setInt("pairx", $vec->x + (1 - $i))
+					->setInt("pairz", $vec->z)
+					->setString("CustomName", InventoryMonitor::getInstance()->getLanguage()->translate("chest.name", [$player instanceof Player ? $player->getName() : $this->playerName]));
+
+			$pk = new protocol\BlockActorDataPacket();
 			$pk->x = $vec->x + $i;
 			$pk->y = $vec->y;
 			$pk->z = $vec->z;
-			$pk->namedtag = (new NetworkLittleEndianNBTStream())->write($nbt);
-			$who->sendDataPacket($pk);
+			$pk->namedtag = (new NetworkNbtSerializer())->write(new TreeRoot($nbt));
+			$who->getNetworkSession()->sendDataPacket($pk);
 		}
 	}
 
@@ -340,24 +360,24 @@ class SyncInventory extends CustomInventory{
 	 * @param Player $who
 	 */
 	public function restoreFakeChestBlock(Player $who) : void{
-		if(!isset($this->vectors[$key = $who->getLowerCaseName()])){
+		if(!isset($this->vectors[$key = strtolower($who->getName())])){
 			return;
 		}
 
 		for($i = 0; $i < 2; $i++){
-			$block = $who->getLevel()->getBlock($vec = $this->vectors[$key]->add($i, 0, 0));
+			$block = $who->getWorld()->getBlock($vec = $this->vectors[$key]->add($i, 0, 0));
 
 			$pk = new protocol\UpdateBlockPacket();
 			$pk->x = $vec->x;
 			$pk->y = $vec->y;
 			$pk->z = $vec->z;
-			$pk->blockRuntimeId = BlockFactory::toStaticRuntimeId($block->getId(), $block->getDamage());
+			$pk->blockRuntimeId = protocol\types\RuntimeBlockMapping::toStaticRuntimeId($block->getId(), $block->getMeta());
 			$pk->flags = 0;
-			$who->sendDataPacket($pk);
+			$who->getNetworkSession()->sendDataPacket($pk);
 
-			$tile = $who->getLevel()->getTile($vec);
+			$tile = $who->getWorld()->getTile($vec);
 			if($tile instanceof Spawnable){
-				$who->sendDataPacket($tile->createSpawnPacket());
+				$who->getNetworkSession()->sendDataPacket(protocol\BlockActorDataPacket::create($tile->getPos()->x, $tile->getPos()->y, $tile->getPos()->z, (new NetworkNbtSerializer())->write(new TreeRoot($tile->getSpawnCompound()))));
 			}
 		}
 		unset($this->vectors[$key]);

@@ -26,31 +26,14 @@ namespace kim\present\inventorymonitor\listener;
 
 use kim\present\inventorymonitor\inventory\group\{ArmorGroup, CursorGroup, InvGroup};
 use kim\present\inventorymonitor\inventory\SyncInventory;
-use pocketmine\event\entity\{EntityArmorChangeEvent, EntityInventoryChangeEvent};
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
+use pocketmine\inventory\ArmorInventory;
 use pocketmine\inventory\PlayerCursorInventory;
+use pocketmine\inventory\PlayerInventory;
 use pocketmine\inventory\transaction\action\SlotChangeAction;
-use pocketmine\Player;
 
 class InventoryEventListener implements Listener{
-	/**
-	 * @priority MONITOR
-	 *
-	 * @param EntityInventoryChangeEvent $event
-	 */
-	public function onEntityInventoryChangeEvent(EntityInventoryChangeEvent $event) : void{
-		if(!$event->isCancelled()){
-			$player = $event->getEntity();
-			if($player instanceof Player){
-				$syncInventory = SyncInventory::get($player->getName());
-				if($syncInventory !== null){
-					$slot = $event->getSlot() + ($event instanceof EntityArmorChangeEvent ? ArmorGroup::START : InvGroup::START);
-					$syncInventory->setItem($slot, $event->getNewItem(), true, false);
-				}
-			}
-		}
-	}
 
 	/**
 	 * @priority MONITOR
@@ -69,6 +52,16 @@ class InventoryEventListener implements Listener{
 					$syncInventory = SyncInventory::get($inventory->getHolder()->getName());
 					if($syncInventory !== null){
 						$syncInventory->setItem(CursorGroup::START, $action->getTargetItem(), true, false);
+					}
+				}elseif($inventory instanceof ArmorInventory){
+					$syncInventory = SyncInventory::get($inventory->getHolder()->getName());
+					if($syncInventory !== null){
+						$syncInventory->setItem($action->getSlot() + ArmorGroup::START, $action->getTargetItem());
+					}
+				}elseif($inventory instanceof PlayerInventory){
+					$syncInventory = SyncInventory::get($inventory->getHolder()->getName());
+					if($syncInventory !== null){
+						$syncInventory->setItem($action->getSlot() + InvGroup::START, $action->getTargetItem());
 					}
 				}
 			}
