@@ -56,9 +56,9 @@ class PluginLang{
 		$this->load($lang);
 
 		//Load fallback language
-		$resoruce = $plugin->getResource("lang/" . self::FALLBACK_LANGUAGE . "/lang.ini");
-		if($resoruce !== null){
-			$this->fallbackLang = array_map("stripcslashes", parse_ini_string(stream_get_contents($resoruce), false, INI_SCANNER_RAW));
+		$resource = $plugin->getResource("lang/" . self::FALLBACK_LANGUAGE . "/lang.ini");
+		if($resource !== null){
+			$this->fallbackLang = array_map("stripcslashes", parse_ini_string(stream_get_contents($resource), false, INI_SCANNER_RAW));
 		}else{
 			$plugin->getLogger()->error("Missing fallback language file");
 		}

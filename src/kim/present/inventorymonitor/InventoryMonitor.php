@@ -29,8 +29,8 @@ use kim\present\inventorymonitor\lang\PluginLang;
 use kim\present\inventorymonitor\listener\{InventoryEventListener, PlayerEventListener};
 use kim\present\inventorymonitor\task\CheckUpdateAsyncTask;
 use pocketmine\command\{Command, CommandSender, PluginCommand};
-use pocketmine\permission\{Permission, PermissionManager};
-use pocketmine\Player;
+use pocketmine\permission\{Permission, PermissionManager, PermissionParser};
+use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 
 class InventoryMonitor extends PluginBase{
@@ -90,7 +90,7 @@ class InventoryMonitor extends PluginBase{
 		$permissions = PermissionManager::getInstance()->getPermissions();
 		$defaultValue = $config->getNested("permission.main");
 		if($defaultValue !== null){
-			$permissions["inventorymonitor.cmd"]->setDefault(Permission::getByName($config->getNested("permission.main")));
+			$permissions["inventorymonitor.cmd"]->setDefault(PermissionParser::defaultFromString($config->getNested("permission.main")));
 		}
 
 		//Register event listeners
@@ -128,13 +128,13 @@ class InventoryMonitor extends PluginBase{
 
 		$syncInventory = SyncInventory::load($args[0]);
 		if($syncInventory !== null){
-			$sender->addWindow($syncInventory);
+			$sender->setCurrentWindow($syncInventory);
 			return true;
 		}
 
 		$player = $this->getServer()->getPlayer($args[0]);
 		if($player instanceof Player){
-			$sender->addWindow(SyncInventory::load($player->getName()));
+			$sender->setCurrentWindow(SyncInventory::load($player->getName()));
 			return true;
 		}
 
